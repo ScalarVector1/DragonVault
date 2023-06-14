@@ -1,0 +1,232 @@
+﻿using DragonVault.Content.GUI.Vault;
+using DragonVault.Core.Loaders.UILoading;
+using System.Collections.Generic;
+using Terraria.ModLoader.IO;
+
+namespace DragonVault.Core.Systems
+{
+	internal class StorageSystem : ModSystem
+	{
+		public static List<ItemEntry> vault = new();
+		public static Dictionary<int, List<ItemEntry>> vaultByID = new();
+
+		public static int maxCapacity = 20000;
+
+		public static int remainingCapacity => maxCapacity - GetVaultLoad();
+
+		/// <summary>
+		/// Returns the current amount of capacity used by the vault
+		/// </summary>
+		/// <returns>The amount of items in the vault</returns>
+		public static int GetVaultLoad()
+		{
+			int load = 0;
+
+			foreach (ItemEntry entry in vault)
+			{
+				load += entry.simStack;
+			}
+
+			return load;
+		}
+
+		/// <summary>
+		/// Attempts to add an item to the vault
+		/// </summary>
+		/// <param name="newItem">The item to add</param>
+		/// <returns>If the item was able to be atleast partially added or not</returns>
+		public static bool TryAddItem(Item newItem, out ItemEntry newEntry)
+		{
+			newEntry = null;
+
+			if (newItem is null)
+				return false;
+
+			if (remainingCapacity <= 0)
+				return false;
+
+			if (vaultByID.ContainsKey(newItem.type))
+			{
+				List<ItemEntry> possibles = vaultByID[newItem.type];
+
+				foreach (ItemEntry possible in possibles)
+				{
+					if (possible.TryDeposit(newItem))
+						return true;
+				}
+
+				return false;
+			}
+			else
+			{
+				newEntry = NewEntry(newItem.type);
+				return newEntry.TryDeposit(newItem);
+			}
+		}
+
+		/// <summary>
+		/// Creates and properly wires up a new entry to the vault
+		/// </summary>
+		/// <param name="type">The item type for this entry</param>
+		/// <returns>The newly created entry</returns>
+		public static ItemEntry NewEntry(int type)
+		{
+			var dummy = new Item();
+			dummy.SetDefaults(type);
+
+			ItemEntry newEntry = new(dummy);
+
+			if (vaultByID.ContainsKey(type))
+				vaultByID[type].Add(newEntry);
+
+			else
+				vaultByID.Add(type, new List<ItemEntry>() { newEntry });
+
+			vault.Add(newEntry);
+
+			return newEntry;
+		}
+
+		/// <summary>
+		/// Reset vault data on world clear
+		/// </summary>
+		public override void ClearWorld()
+		{
+			vault = new();
+			vaultByID = new();
+			UILoader.GetUIState<VaultBrowser>().initialized = false;
+		}
+
+		/// <summary>
+		/// Serialize vault data for saving.
+		/// </summary>
+		/// <param name="tag">The saved tagCompound</param>
+		public override void SaveWorldData(TagCompound tag)
+		{
+			List<TagCompound> tags = new();
+
+			vault.ForEach(n =>
+			{
+				TagCompound t = new();
+				n.Save(t);
+				tags.Add(t);
+			});
+
+			tag["vault"] = tags;
+		}
+
+		/// <summary>
+		/// Deserialize vault data and re-insert it as appropriate into lookup dicts
+		/// </summary>
+		/// <param name="tag">The tag containing the vault data</param>
+		public override void LoadWorldData(TagCompound tag)
+		{
+			var tags = (List<TagCompound>)tag.GetList<TagCompound>("vault");
+
+			foreach (TagCompound entryTag in tags)
+			{
+				ItemEntry entry = new();
+				entry.Load(entryTag);
+
+				if (vaultByID.ContainsKey(entry.item.type))
+					vaultByID[entry.item.type].Add(entry);
+
+				else
+					vaultByID.Add(entry.item.type, new List<ItemEntry>() { entry });
+
+				vault.Add(entry);
+			}
+		}
+	}
+
+	/// <summary>
+	/// Represents an entry in the vault for an item. These are by type, or based on stackability.
+	/// </summary>
+	internal class ItemEntry
+	{
+		public Item item;
+		public int simStack;
+
+		public ItemEntry() { }
+
+		public ItemEntry(Item item)
+		{
+			this.item = item;
+			simStack = 0;
+		}
+
+		/// <summary>
+		/// Attempts to deposit an item into this entry
+		/// </summary>
+		/// <param name="newItem">The item to deposit</param>
+		/// <returns>If the item was atleast partially deposited or not</returns>
+		public bool TryDeposit(Item newItem)
+		{
+			// Type matches
+			if (newItem is null || newItem.type != item.type)
+				return false;
+
+			// Can be stacked
+			if (!item.ModItem?.CanStack(newItem) ?? false)
+				return false;
+
+			int amountToAdd = newItem.stack;
+
+			if (amountToAdd > StorageSystem.remainingCapacity)
+				amountToAdd = StorageSystem.remainingCapacity;
+
+			newItem.stack -= amountToAdd;
+			simStack += amountToAdd;
+
+			if (newItem.stack <= 0)
+				newItem.TurnToAir();
+
+			return true;
+		}
+
+		/// <summary>
+		/// Checks and returns if this entry should be destroyed, and if so, destroys it.
+		/// </summary>
+		/// <returns>If this entry was destroyed</returns>
+		public bool CheckGone()
+		{
+			if (simStack <= 0)
+			{
+				if (StorageSystem.vault.Contains(this))
+					StorageSystem.vault.Remove(this);
+
+				if (StorageSystem.vaultByID.ContainsKey(item.type) && StorageSystem.vaultByID[item.type].Contains(this))
+				{
+					StorageSystem.vaultByID[item.type].Remove(this);
+
+					if (StorageSystem.vaultByID[item.type].Count <= 0)
+						StorageSystem.vaultByID.Remove(item.type);
+				}
+
+				return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Serialize an ItemEntry
+		/// </summary>
+		/// <param name="tag">tag containing item entry data</param>
+		public void Save(TagCompound tag)
+		{
+			tag["item"] = item;
+			tag["stack"] = simStack;
+		}
+
+		/// <summary>
+		/// Deserialize an ItemEntry
+		/// </summary>
+		/// <param name="tag">tag containing item entry data</param>
+		public void Load(TagCompound tag)
+		{
+			item = tag.Get<Item>("item");
+			simStack = tag.GetInt("stack");
+		}
+	}
+}
