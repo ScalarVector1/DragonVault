@@ -2,7 +2,7 @@
 {
 	internal class ThemeColorProvider
 	{
-		public Color buttonColor = Color.Blue;
-		public Color backgroundColor = Color.Blue * 0.8f;
+		public Color buttonColor = new(100, 80, 200);
+		public Color backgroundColor = new Color(100, 60, 160) * 0.8f;
 	}
 }

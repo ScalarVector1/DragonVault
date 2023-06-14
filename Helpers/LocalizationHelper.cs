@@ -14,7 +14,8 @@ namespace DragonVault.Helpers
 		/// <returns>the text should be displayed</returns>
 		public static string GetText(string key, params object[] args)
 		{
-			return Language.Exists($"Mods.DragonVault.{key}") ? Language.GetTextValue($"Mods.DragonVault.{key}", args) : key;
+			Language.GetOrRegister(key);
+			return Language.Exists($"Mods.DragonVault.{key}") ? Language.GetTextValue($"Mods.DragonVault.{key}", args) : Language.GetOrRegister(key).Value;
 		}
 
 		public static string GetGUIText(string key, params object[] args)

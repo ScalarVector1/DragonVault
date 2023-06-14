@@ -2,6 +2,8 @@
 using DragonVault.Content.Filters.ItemFilters;
 using DragonVault.Core.Loaders.UILoading;
 using DragonVault.Core.Systems;
+using DragonVault.Core.Systems.ThemeSystem;
+using DragonVault.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,13 +15,21 @@ namespace DragonVault.Content.GUI.Vault
 {
 	internal class VaultBrowser : Browser
 	{
+		public StorageButton button;
+
 		public override string Name => Main.worldName + "'s Vault";
 
 		public override string IconTexture => "ItemSpawner";
 
 		public override string HelpLink => "https://github.com/ScalarVector1/DragonVault/wiki/Item-spawner";
 
-		public override Vector2 DefaultPosition => new(0.3f, 0.4f);
+		public override Vector2 DefaultPosition => new(0.6f, 0.4f);
+
+		public override void PostInitialize()
+		{
+			button = new();
+			Append(button);
+		}
 
 		public override void PopulateGrid(UIGrid grid)
 		{
@@ -31,7 +41,6 @@ namespace DragonVault.Content.GUI.Vault
 			}
 
 			grid.AddRange(buttons);
-			Main.NewText(grid._items.Count);
 		}
 
 		public override void SetupFilters(FilterPanel filters)
@@ -60,29 +69,32 @@ namespace DragonVault.Content.GUI.Vault
 			filters.AddFilter(new Filter("DragonVault/Assets/Filters/Unknown", "Tools.ItemSpawner.Filters.Deprecated", n => n is ItemButton ib && !ItemID.Sets.Deprecated[ib.entry.item.type]));
 		}
 
+		public override void AdjustPositions(Vector2 newPos)
+		{
+			base.AdjustPositions(newPos);
+
+			button.Left.Set(newPos.X - 180, 0);
+			button.Top.Set(newPos.Y, 0);
+		}
+
 		public override void Draw(SpriteBatch spriteBatch)
 		{
 			base.Draw(spriteBatch);
 
-			Utils.DrawBorderStringBig(spriteBatch, $"{StorageSystem.maxCapacity - StorageSystem.remainingCapacity}/{StorageSystem.maxCapacity}", basePos + new Vector2(24, 48), Color.White, 0.4f);
+			int used = StorageSystem.maxCapacity - StorageSystem.remainingCapacity;
+			int max = StorageSystem.maxCapacity;
+
+			Utils.DrawBorderStringBig(spriteBatch, $"{used}/{max}", basePos + new Vector2(24, 48), Color.White, 0.4f);
 		}
 
 		public override void SafeClick(UIMouseEvent evt)
 		{
-			Main.NewText(options._items.Count);
-
 			if (BoundingBox.Contains(Main.MouseScreen.ToPoint()) && Main.mouseItem != null && !Main.mouseItem.IsAir)
 			{
 				bool added = StorageSystem.TryAddItem(Main.mouseItem, out ItemEntry newEntry);
 
 				if (added && newEntry != null)
-				{
-					Main.NewText("Deposited and created!");
 					Rebuild();
-					return;
-				}
-
-				Main.NewText(added ? "Deposited!" : "Not deposited...");
 			}
 		}
 
@@ -123,10 +135,19 @@ namespace DragonVault.Content.GUI.Vault
 
 		public override void SafeClick(UIMouseEvent evt)
 		{
-			if (Main.mouseItem.IsAir)
-			{
-				int withdrawn = Math.Min(entry.item.maxStack, entry.simStack);
+			int withdrawn = Math.Min(entry.item.maxStack, entry.simStack);
 
+			if (Main.keyState.PressingShift())
+			{
+				Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_FromThis(), entry.item, withdrawn);
+				entry.simStack -= withdrawn;
+
+				if (entry.CheckGone())
+					VaultBrowser.Rebuild();
+			}
+			else if (Main.mouseItem.IsAir)
+			{
+				Main.playerInventory = true;
 				Main.mouseItem = entry.item.Clone();
 				Main.mouseItem.stack = withdrawn;
 				entry.simStack -= withdrawn;
@@ -184,6 +205,40 @@ namespace DragonVault.Content.GUI.Vault
 		public override int CompareTo(object obj)
 		{
 			return entry.item.type - (obj as ItemButton).entry.item.type;
+		}
+	}
+
+	internal class StorageButton : UIElement
+	{
+		public StorageButton()
+		{
+			Width.Set(160, 0);
+			Height.Set(80, 0);
+		}
+
+		public override void Draw(SpriteBatch spriteBatch)
+		{
+			var drawBox = GetDimensions().ToRectangle();
+
+			GUIHelper.DrawBox(spriteBatch, drawBox, ThemeHandler.ButtonColor);
+
+			Utils.DrawBorderString(spriteBatch, $"Increase storage", drawBox.Center.ToVector2() + new Vector2(0, -24), Color.White, 1, 0.5f, 0f);
+			Utils.DrawBorderString(spriteBatch, $"Cost: {StorageSystem.maxCapacity / 10000} gold", drawBox.Center.ToVector2() + new Vector2(0, 0), Color.Gold, 1, 0.5f, 0f);
+
+		}
+
+		public override void LeftClick(UIMouseEvent evt)
+		{
+			if (Main.LocalPlayer.CanAfford(Item.buyPrice(0, StorageSystem.maxCapacity / 10000)))
+			{
+				Main.LocalPlayer.PayCurrency(Item.buyPrice(0, StorageSystem.maxCapacity / 10000, 0, 0));
+				StorageSystem.maxCapacity += 20000;
+				Main.NewText($"Vault size increased to {StorageSystem.maxCapacity} for {Main.worldName}!", Color.Gold);
+			}
+			else
+			{
+				Main.NewText("Insufficient coins", Color.Red);
+			}
 		}
 	}
 }

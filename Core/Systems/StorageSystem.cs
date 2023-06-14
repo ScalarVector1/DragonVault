@@ -94,6 +94,7 @@ namespace DragonVault.Core.Systems
 		{
 			vault = new();
 			vaultByID = new();
+			maxCapacity = 20000;
 			UILoader.GetUIState<VaultBrowser>().initialized = false;
 		}
 
@@ -113,6 +114,7 @@ namespace DragonVault.Core.Systems
 			});
 
 			tag["vault"] = tags;
+			tag["capacity"] = maxCapacity;
 		}
 
 		/// <summary>
@@ -136,6 +138,8 @@ namespace DragonVault.Core.Systems
 
 				vault.Add(entry);
 			}
+
+			maxCapacity = tag.GetInt("capacity");
 		}
 	}
 
