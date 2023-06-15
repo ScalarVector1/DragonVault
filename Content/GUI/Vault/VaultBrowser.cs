@@ -1,5 +1,6 @@
 ﻿using DragonVault.Content.Filters;
 using DragonVault.Content.Filters.ItemFilters;
+using DragonVault.Content.Items.Dragonstones;
 using DragonVault.Core.Loaders.UILoading;
 using DragonVault.Core.Systems;
 using DragonVault.Core.Systems.ThemeSystem;
@@ -17,6 +18,8 @@ namespace DragonVault.Content.GUI.Vault
 	{
 		public StorageButton button;
 
+		public StoneSlot[] slots;
+
 		public override string Name => Main.worldName + "'s Vault";
 
 		public override string IconTexture => "ItemSpawner";
@@ -29,6 +32,23 @@ namespace DragonVault.Content.GUI.Vault
 		{
 			button = new();
 			Append(button);
+
+			slots = new StoneSlot[]
+			{
+				new StoneSlot(Stones.Rose),
+				new StoneSlot(Stones.Citrine),
+				new StoneSlot(Stones.Radiant),
+				new StoneSlot(Stones.Verdant),
+				new StoneSlot(Stones.Cerulean),
+				new StoneSlot(Stones.Azure),
+				new StoneSlot(Stones.Midnight),
+				new StoneSlot(Stones.Pure)
+			};
+
+			foreach (StoneSlot slot in slots)
+			{
+				Append(slot);
+			}
 		}
 
 		public override void PopulateGrid(UIGrid grid)
@@ -75,14 +95,23 @@ namespace DragonVault.Content.GUI.Vault
 
 			button.Left.Set(newPos.X - 180, 0);
 			button.Top.Set(newPos.Y, 0);
+
+			int y = 0;
+
+			foreach (StoneSlot slot in slots)
+			{
+				slot.Left.Set(newPos.X - 74, 0);
+				slot.Top.Set(newPos.Y + 104 + y, 0);
+				y += 60;
+			}
 		}
 
 		public override void Draw(SpriteBatch spriteBatch)
 		{
 			base.Draw(spriteBatch);
 
-			int used = StorageSystem.maxCapacity - StorageSystem.remainingCapacity;
-			int max = StorageSystem.maxCapacity;
+			int used = StorageSystem.MaxCapacity - StorageSystem.RemainingCapacity;
+			int max = StorageSystem.MaxCapacity;
 
 			Utils.DrawBorderStringBig(spriteBatch, $"{used}/{max}", basePos + new Vector2(24, 48), Color.White, 0.4f);
 		}
@@ -223,17 +252,17 @@ namespace DragonVault.Content.GUI.Vault
 			GUIHelper.DrawBox(spriteBatch, drawBox, ThemeHandler.ButtonColor);
 
 			Utils.DrawBorderString(spriteBatch, $"Increase storage", drawBox.Center.ToVector2() + new Vector2(0, -24), Color.White, 1, 0.5f, 0f);
-			Utils.DrawBorderString(spriteBatch, $"Cost: {StorageSystem.maxCapacity / 10000} gold", drawBox.Center.ToVector2() + new Vector2(0, 0), Color.Gold, 1, 0.5f, 0f);
+			Utils.DrawBorderString(spriteBatch, $"Cost: {StorageSystem.baseCapacity / 5000} gold", drawBox.Center.ToVector2() + new Vector2(0, 0), Color.Gold, 1, 0.5f, 0f);
 
 		}
 
 		public override void LeftClick(UIMouseEvent evt)
 		{
-			if (Main.LocalPlayer.CanAfford(Item.buyPrice(0, StorageSystem.maxCapacity / 10000)))
+			if (Main.LocalPlayer.CanAfford(Item.buyPrice(0, StorageSystem.baseCapacity / 5000)))
 			{
-				Main.LocalPlayer.PayCurrency(Item.buyPrice(0, StorageSystem.maxCapacity / 10000, 0, 0));
-				StorageSystem.maxCapacity += 20000;
-				Main.NewText($"Vault size increased to {StorageSystem.maxCapacity} for {Main.worldName}!", Color.Gold);
+				Main.LocalPlayer.PayCurrency(Item.buyPrice(0, StorageSystem.baseCapacity / 5000, 0, 0));
+				StorageSystem.baseCapacity += 20000;
+				Main.NewText($"Vault size increased to {StorageSystem.MaxCapacity} for {Main.worldName}!", Color.Gold);
 			}
 			else
 			{

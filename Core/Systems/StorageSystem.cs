@@ -1,4 +1,5 @@
 ﻿using DragonVault.Content.GUI.Vault;
+using DragonVault.Content.Items.Dragonstones;
 using DragonVault.Core.Loaders.UILoading;
 using System.Collections.Generic;
 using Terraria.ModLoader.IO;
@@ -10,9 +11,14 @@ namespace DragonVault.Core.Systems
 		public static List<ItemEntry> vault = new();
 		public static Dictionary<int, List<ItemEntry>> vaultByID = new();
 
-		public static int maxCapacity = 20000;
+		public static int baseCapacity = 20000;
+		public static int extraCapacity = 0;
 
-		public static int remainingCapacity => maxCapacity - GetVaultLoad();
+		public static Stones stoneFlags = 0;
+
+		public static int MaxCapacity => extraCapacity + baseCapacity;
+
+		public static int RemainingCapacity => MaxCapacity - GetVaultLoad();
 
 		/// <summary>
 		/// Returns the current amount of capacity used by the vault
@@ -42,7 +48,7 @@ namespace DragonVault.Core.Systems
 			if (newItem is null)
 				return false;
 
-			if (remainingCapacity <= 0)
+			if (RemainingCapacity <= 0)
 				return false;
 
 			if (vaultByID.ContainsKey(newItem.type))
@@ -94,7 +100,8 @@ namespace DragonVault.Core.Systems
 		{
 			vault = new();
 			vaultByID = new();
-			maxCapacity = 20000;
+			baseCapacity = 20000;
+			stoneFlags = 0;
 			UILoader.GetUIState<VaultBrowser>().initialized = false;
 		}
 
@@ -114,7 +121,8 @@ namespace DragonVault.Core.Systems
 			});
 
 			tag["vault"] = tags;
-			tag["capacity"] = maxCapacity;
+			tag["capacity"] = baseCapacity;
+			tag["stones"] = (int)stoneFlags;
 		}
 
 		/// <summary>
@@ -139,7 +147,8 @@ namespace DragonVault.Core.Systems
 				vault.Add(entry);
 			}
 
-			maxCapacity = tag.GetInt("capacity");
+			baseCapacity = tag.GetInt("capacity");
+			stoneFlags = (Stones)tag.GetInt("stones");
 		}
 	}
 
@@ -176,8 +185,8 @@ namespace DragonVault.Core.Systems
 
 			int amountToAdd = newItem.stack;
 
-			if (amountToAdd > StorageSystem.remainingCapacity)
-				amountToAdd = StorageSystem.remainingCapacity;
+			if (amountToAdd > StorageSystem.RemainingCapacity)
+				amountToAdd = StorageSystem.RemainingCapacity;
 
 			newItem.stack -= amountToAdd;
 			simStack += amountToAdd;
