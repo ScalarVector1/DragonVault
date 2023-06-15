@@ -63,7 +63,7 @@ namespace DragonVault.Content.GUI.Vault
 			if (IsMouseHovering)
 			{
 				Tooltip.SetName(Dragonstone.samples[id].Name);
-				Tooltip.SetTooltip(Dragonstone.samples[id].ModItem.Tooltip.Value + "\n\n" + (Active ? "Active" : "Slot the item here to activate this power for " + Main.worldName));
+				Tooltip.SetTooltip(Dragonstone.samples[id].ModItem.Tooltip.Value.Replace("\n", "\n------\n") + "\n------\n" + (Active ? "Active" : "Slot the item here to activate this power for " + Main.worldName));
 			}
 		}
 
@@ -79,7 +79,7 @@ namespace DragonVault.Content.GUI.Vault
 					slotTimer = 120;
 
 					SoundEngine.PlaySound(SoundID.DD2_WitherBeastDeath);
-					SoundEngine.PlaySound(SoundID.DD2_WinScene.WithPitchOffset(2).WithVolumeScale(0.5f));
+					SoundEngine.PlaySound(SoundID.DD2_WitherBeastAuraPulse);
 				}
 			}
 		}
