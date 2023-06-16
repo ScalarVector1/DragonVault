@@ -3,32 +3,56 @@ Tiles.Vault.MapEntry: Vault
 Items: {
 	AzureStone: {
 		DisplayName: Azure Dragonstone
-		Tooltip: "Allows full remote access to the vault\nDropped by Duke Fishron"
+		Tooltip:
+			'''
+			Allows full remote access to the vault
+			Dropped by Duke Fishron
+			'''
 	}
 
 	CeruleanStone: {
 		DisplayName: Cerulean Dragonstone
-		Tooltip: "Allows the vault to be used as hardmode crafting stations\nDropped by any mechanical boss"
+		Tooltip:
+			'''
+			Allows the vault to be used as hardmode crafting stations
+			Dropped by any mechanical boss
+			'''
 	}
 
 	CitrineStone: {
 		DisplayName: Citrine Dragonstone
-		Tooltip: "Allows the vault to be used as basic crafting stations\nDropped by the Eater of Worlds or Brain of Cthulu"
+		Tooltip:
+			'''
+			Allows the vault to be used as basic crafting stations
+			Dropped by the Eater of Worlds or Brain of Cthulu
+			'''
 	}
 
 	MidnightStone: {
 		DisplayName: Midnight Dragonstone
-		Tooltip: "Allows (near) infinite storage\nDropped by the Moon Lord"
+		Tooltip:
+			'''
+			Allows (near) infinite storage
+			Dropped by the Moon Lord
+			'''
 	}
 
 	PureStone: {
 		DisplayName: Pure Dragonstone
-		Tooltip: "Your vault is guarded by a pet dragon\nExtremely rare drop from any mob after moonlord has been defeated"
+		Tooltip:
+			'''
+			Your vault is guarded by a pet dragon
+			Extremely rare drop from any mob after moonlord has been defeated
+			'''
 	}
 
 	RadiantStone: {
 		DisplayName: Radiant Dragonstone
-		Tooltip: "Allows for remote depositing to your vault\nDropped by Skeletron"
+		Tooltip:
+			'''
+			Allows for remote depositing to your vault
+			Dropped by Skeletron
+			'''
 	}
 
 	RoseStone: {
@@ -42,6 +66,10 @@ Items: {
 
 	VerdantStone: {
 		DisplayName: Verdant Dragonstone
-		Tooltip: "Increases capacity by 100000\nDropped by the Wall of Flesh"
+		Tooltip:
+			'''
+			Increases capacity by 100000
+			Dropped by the Wall of Flesh
+			'''
 	}
 }

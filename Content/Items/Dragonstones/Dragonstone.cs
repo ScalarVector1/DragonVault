@@ -46,9 +46,17 @@ namespace DragonVault.Content.Items.Dragonstones
 			this.color = color;
 		}
 
+		public override void SetStaticDefaults()
+		{
+			ItemID.Sets.ItemNoGravity[Type] = true;
+		}
+
 		public override void SetDefaults()
 		{
 			Item.color = color;
+			Item.width = 38;
+			Item.height = 38;
+			Item.rare = ItemRarityID.Quest;
 		}
 
 		public override void PostDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
@@ -60,10 +68,41 @@ namespace DragonVault.Content.Items.Dragonstones
 			spriteBatch.Draw(tex, position, frame, color2, 0, origin, scale, 0, 0);
 		}
 
+		public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
+		{
+			Color color2 = Color.White.MultiplyRGB(lightColor);
+			color2.A = 0;
+
+			Texture2D tex = ModContent.Request<Texture2D>(Texture + "Over").Value;
+			spriteBatch.Draw(tex, Item.Center - Main.screenPosition, null, color2, rotation, tex.Size() / 2f, scale, 0, 0);
+
+			Texture2D tex4 = ModContent.Request<Texture2D>("DragonVault/Assets/Flare").Value;
+
+			float alpha = 1f;
+			Color color3 = color * alpha;
+			color3.A = 0;
+
+			spriteBatch.Draw(tex4, Item.Center - Main.screenPosition, null, color3 * 0.5f, Main.GameUpdateCount * 0.02f, tex4.Size() / 2f, 0.06f, 0, 0);
+
+			spriteBatch.Draw(tex4, Item.Center - Main.screenPosition, null, color2 * alpha * 0.45f, Main.GameUpdateCount * 0.02f, tex4.Size() / 2f, 0.06f, 0, 0);
+		}
+
+		public override void PostUpdate()
+		{
+			Lighting.AddLight(Item.Center, Color.Lerp(Item.color, Color.White, 0.5f).ToVector3());
+			var d = Dust.NewDustPerfect(Item.Center, DustID.FireworksRGB, Main.rand.NextVector2Circular(4, 4), 0, Color.Lerp(Item.color, Color.White, 0.5f), Main.rand.NextFloat());
+			d.noGravity = true;
+		}
+
 		/// <summary>
 		/// What should happen when the stone is slotted in
 		/// </summary>
 		public abstract void OnSlot();
+
+		/// <summary>
+		/// Resets this stones effects on world unload
+		/// </summary>
+		public abstract void Reset();
 	}
 
 	internal class RoseStone : Dragonstone
@@ -73,6 +112,11 @@ namespace DragonVault.Content.Items.Dragonstones
 		public override void OnSlot()
 		{
 			StorageSystem.extraCapacity += 50000;
+		}
+
+		public override void Reset()
+		{
+			StorageSystem.extraCapacity -= 50000;
 		}
 	}
 
@@ -94,6 +138,11 @@ namespace DragonVault.Content.Items.Dragonstones
 				TileID.Bottles
 			};
 		}
+
+		public override void Reset()
+		{
+			ModContent.GetModTile(ModContent.TileType<Vault>()).AdjTiles = new int[] { };
+		}
 	}
 
 	internal class RadiantStone : Dragonstone
@@ -101,6 +150,11 @@ namespace DragonVault.Content.Items.Dragonstones
 		public RadiantStone() : base(Stones.Radiant, new Color(200, 200, 10)) { }
 
 		public override void OnSlot()
+		{
+			// enable remote UI
+		}
+
+		public override void Reset()
 		{
 
 		}
@@ -112,7 +166,12 @@ namespace DragonVault.Content.Items.Dragonstones
 
 		public override void OnSlot()
 		{
+			StorageSystem.extraCapacity += 100000;
+		}
 
+		public override void Reset()
+		{
+			StorageSystem.extraCapacity -= 100000;
 		}
 	}
 
@@ -122,7 +181,26 @@ namespace DragonVault.Content.Items.Dragonstones
 
 		public override void OnSlot()
 		{
+			ModContent.GetModTile(ModContent.TileType<Vault>()).AdjTiles = new int[]
+			{
+				TileID.WorkBenches,
+				TileID.Furnaces,
+				TileID.Anvils,
+				TileID.Sawmill,
+				TileID.Loom,
+				TileID.HeavyWorkBench,
+				TileID.GlassKiln,
+				TileID.Bottles,
+				TileID.DemonAltar,
+				TileID.MythrilAnvil,
+				TileID.AdamantiteForge,
+				TileID.LunarCraftingStation
+			};
+		}
 
+		public override void Reset()
+		{
+			ModContent.GetModTile(ModContent.TileType<Vault>()).AdjTiles = new int[] { };
 		}
 	}
 
@@ -131,6 +209,11 @@ namespace DragonVault.Content.Items.Dragonstones
 		public AzureStone() : base(Stones.Azure, new Color(10, 40, 200)) { }
 
 		public override void OnSlot()
+		{
+			// enable full remote UI
+		}
+
+		public override void Reset()
 		{
 
 		}
@@ -142,7 +225,12 @@ namespace DragonVault.Content.Items.Dragonstones
 
 		public override void OnSlot()
 		{
+			StorageSystem.extraCapacity += 1000000000;
+		}
 
+		public override void Reset()
+		{
+			StorageSystem.extraCapacity = 0;
 		}
 	}
 
@@ -151,6 +239,11 @@ namespace DragonVault.Content.Items.Dragonstones
 		public PureStone() : base(Stones.Pure, new Color(200, 200, 200)) { }
 
 		public override void OnSlot()
+		{
+			// enable vault spawning pet projectile
+		}
+
+		public override void Reset()
 		{
 
 		}

@@ -2,6 +2,7 @@
 using DragonVault.Content.Items.Dragonstones;
 using DragonVault.Core.Loaders.UILoading;
 using System.Collections.Generic;
+using Terraria.ID;
 using Terraria.ModLoader.IO;
 
 namespace DragonVault.Core.Systems
@@ -102,7 +103,20 @@ namespace DragonVault.Core.Systems
 			vaultByID = new();
 			baseCapacity = 20000;
 			stoneFlags = 0;
-			UILoader.GetUIState<VaultBrowser>().initialized = false;
+
+			for (int k = 0; k < 8; k++)
+			{
+				var stone = (Stones)(1 << k);
+
+				if ((stoneFlags & stone) > 0)
+					(Dragonstone.samples[stone].ModItem as Dragonstone).Reset();
+			}
+
+			if (Main.netMode != NetmodeID.Server)
+			{
+				UILoader.GetUIState<VaultBrowser>().initialized = false;
+				UILoader.GetUIState<VaultBrowser>().visible = false;
+			}
 		}
 
 		/// <summary>
@@ -149,6 +163,14 @@ namespace DragonVault.Core.Systems
 
 			baseCapacity = tag.GetInt("capacity");
 			stoneFlags = (Stones)tag.GetInt("stones");
+
+			for (int k = 0; k < 8; k++)
+			{
+				var stone = (Stones)(1 << k);
+
+				if ((stoneFlags & stone) > 0)
+					(Dragonstone.samples[stone].ModItem as Dragonstone).OnSlot();
+			}
 		}
 	}
 

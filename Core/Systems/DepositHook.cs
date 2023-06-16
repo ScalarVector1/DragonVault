@@ -1,5 +1,6 @@
 ﻿using DragonVault.Content.GUI.Vault;
 using DragonVault.Core.Loaders.UILoading;
+using DragonVault.Core.Networking;
 using Terraria.UI;
 
 namespace DragonVault.Core.Systems
@@ -8,7 +9,7 @@ namespace DragonVault.Core.Systems
 	{
 		public override void Load()
 		{
-			Terraria.UI.On_ItemSlot.LeftClick_ItemArray_int_int += Test;
+			On_ItemSlot.LeftClick_ItemArray_int_int += Test;
 		}
 
 		private void Test(On_ItemSlot.orig_LeftClick_ItemArray_int_int orig, Item[] inv, int context, int slot)
@@ -19,6 +20,8 @@ namespace DragonVault.Core.Systems
 
 				if (added && newEntry != null)
 					VaultBrowser.Rebuild();
+
+				VaultNet.SendDeposit(newEntry.simStack, newEntry.item);
 
 				return;
 			}

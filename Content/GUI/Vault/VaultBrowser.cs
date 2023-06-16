@@ -2,6 +2,7 @@
 using DragonVault.Content.Filters.ItemFilters;
 using DragonVault.Content.Items.Dragonstones;
 using DragonVault.Core.Loaders.UILoading;
+using DragonVault.Core.Networking;
 using DragonVault.Core.Systems;
 using DragonVault.Core.Systems.ThemeSystem;
 using DragonVault.Helpers;
@@ -124,6 +125,8 @@ namespace DragonVault.Content.GUI.Vault
 
 				if (added && newEntry != null)
 					Rebuild();
+
+				VaultNet.SendDeposit(newEntry.simStack, newEntry.item);
 			}
 		}
 
@@ -173,6 +176,8 @@ namespace DragonVault.Content.GUI.Vault
 
 				if (entry.CheckGone())
 					VaultBrowser.Rebuild();
+
+				VaultNet.SendWithdrawl(withdrawn, entry.item);
 			}
 			else if (Main.mouseItem.IsAir)
 			{
@@ -183,6 +188,8 @@ namespace DragonVault.Content.GUI.Vault
 
 				if (entry.CheckGone())
 					VaultBrowser.Rebuild();
+
+				VaultNet.SendWithdrawl(withdrawn, entry.item);
 			}
 		}
 
@@ -198,6 +205,8 @@ namespace DragonVault.Content.GUI.Vault
 
 				if (entry.CheckGone())
 					VaultBrowser.Rebuild();
+
+				VaultNet.SendWithdrawl(1, entry.item);
 			}
 			else if (Main.mouseItem.type == entry.item.type)
 			{
@@ -206,12 +215,18 @@ namespace DragonVault.Content.GUI.Vault
 
 				if (entry.CheckGone())
 					VaultBrowser.Rebuild();
+
+				VaultNet.SendWithdrawl(1, entry.item);
 			}
 		}
 
 		public override void SafeUpdate(GameTime gameTime)
 		{
 			base.SafeUpdate(gameTime);
+
+			// Prevents net spam... a tad inconvenient but.. oh well
+			if (Main.netMode != NetmodeID.SinglePlayer)
+				return;
 
 			// Allows for "Hold RMB to get more
 			if (IsMouseHovering && Main.mouseRight && Main.mouseItem.type == entry.item.type)
