@@ -1,4 +1,5 @@
 ﻿using DragonVault.Content.Items.Dragonstones;
+using DragonVault.Core.Networking;
 using DragonVault.Core.Systems;
 using DragonVault.Core.Systems.ThemeSystem;
 using DragonVault.Helpers;
@@ -71,7 +72,7 @@ namespace DragonVault.Content.GUI.Vault
 		{
 			if (Main.mouseItem.ModItem is Dragonstone stone)
 			{
-				if (stone.id == id)
+				if (stone.id == id && (StorageSystem.stoneFlags & id) == 0)
 				{
 					stone.OnSlot();
 					StorageSystem.stoneFlags |= id;
@@ -80,6 +81,8 @@ namespace DragonVault.Content.GUI.Vault
 
 					SoundEngine.PlaySound(SoundID.DD2_WitherBeastDeath);
 					SoundEngine.PlaySound(SoundID.DD2_WitherBeastAuraPulse);
+
+					VaultNet.Data();
 				}
 			}
 		}

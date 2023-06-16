@@ -278,6 +278,8 @@ namespace DragonVault.Content.GUI.Vault
 				Main.LocalPlayer.PayCurrency(Item.buyPrice(0, StorageSystem.baseCapacity / 5000, 0, 0));
 				StorageSystem.baseCapacity += 20000;
 				Main.NewText($"Vault size increased to {StorageSystem.MaxCapacity} for {Main.worldName}!", Color.Gold);
+
+				VaultNet.Data();
 			}
 			else
 			{

@@ -116,7 +116,7 @@ namespace DragonVault.Content.Items.Dragonstones
 
 		public override void Reset()
 		{
-			StorageSystem.extraCapacity -= 50000;
+			StorageSystem.extraCapacity = 0;
 		}
 	}
 
@@ -171,7 +171,7 @@ namespace DragonVault.Content.Items.Dragonstones
 
 		public override void Reset()
 		{
-			StorageSystem.extraCapacity -= 100000;
+			StorageSystem.extraCapacity = 0;
 		}
 	}
 

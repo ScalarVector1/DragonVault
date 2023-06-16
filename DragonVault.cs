@@ -108,17 +108,36 @@ namespace DragonVault
 			}
 			else if (type == "Data")
 			{
-				// Only clients should recieve these
-				if (Main.netMode != NetmodeID.MultiplayerClient)
-					return;
-
 				int cap = reader.ReadInt32();
 				int stone = reader.ReadInt32();
 
 				StorageSystem.baseCapacity = cap;
 				StorageSystem.stoneFlags = (Stones)stone;
 
+				for (int k = 0; k < 8; k++)
+				{
+					var ston = (Stones)(1 << k);
+
+					if ((StorageSystem.stoneFlags & ston) > 0)
+					{
+						(Dragonstone.samples[ston].ModItem as Dragonstone).Reset();
+					}
+				}
+
+				for (int k = 0; k < 8; k++)
+				{
+					var ston = (Stones)(1 << k);
+
+					if ((StorageSystem.stoneFlags & ston) > 0)
+					{
+						(Dragonstone.samples[ston].ModItem as Dragonstone).OnSlot();
+					}
+				}
+
 				Logger.Info($"Data for world recieved.");
+
+				if (Main.netMode == NetmodeID.Server)
+					VaultNet.Data(-1, whoAmI);
 			}
 		}
 	}
