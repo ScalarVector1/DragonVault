@@ -58,7 +58,7 @@ namespace DragonVault.Content.GUI
 
 		public sealed override void OnInitialize()
 		{
-			basePos = new Vector2(DefaultPosition.X * Main.screenWidth, DefaultPosition.Y * Main.screenHeight);
+			basePos = new Vector2(DefaultPosition.X * Main.screenWidth / Main.UIScale, DefaultPosition.Y * Main.screenHeight / Main.UIScale);
 
 			closeButton = new UIImageButton(ModContent.Request<Texture2D>("DragonVault/Assets/GUI/Remove"));
 			closeButton.Width.Set(16, 0);

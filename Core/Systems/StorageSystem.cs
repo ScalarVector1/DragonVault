@@ -46,7 +46,7 @@ namespace DragonVault.Core.Systems
 		{
 			newEntry = null;
 
-			if (newItem is null)
+			if (newItem is null || newItem.IsAir || newItem.stack <= 0)
 				return false;
 
 			if (RemainingCapacity <= 0)

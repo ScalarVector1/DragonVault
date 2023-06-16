@@ -121,12 +121,13 @@ namespace DragonVault.Content.GUI.Vault
 		{
 			if (BoundingBox.Contains(Main.MouseScreen.ToPoint()) && Main.mouseItem != null && !Main.mouseItem.IsAir)
 			{
+				var item = Main.mouseItem.Clone();
 				bool added = StorageSystem.TryAddItem(Main.mouseItem, out ItemEntry newEntry);
 
 				if (added && newEntry != null)
 					Rebuild();
 
-				VaultNet.SendDeposit(newEntry.simStack, newEntry.item);
+				VaultNet.SendDeposit(item.stack, item);
 			}
 		}
 
