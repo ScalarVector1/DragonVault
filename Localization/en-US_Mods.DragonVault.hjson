@@ -72,4 +72,9 @@ Items: {
 			Dropped by the Wall of Flesh
 			'''
 	}
+
+	VaultItem: {
+		DisplayName: Dragon Vault
+		Tooltip: The ultimate storage solution! (magic not included)
+	}
 }

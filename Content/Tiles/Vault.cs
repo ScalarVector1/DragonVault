@@ -129,5 +129,31 @@ namespace DragonVault.Content.Tiles
 		}
 		#endregion
 	}
+
+	internal class VaultItem : ModItem
+	{
+		public override void SetDefaults()
+		{
+			Item.rare = ItemRarityID.Orange;
+			Item.useTime = 10;
+			Item.useAnimation = 10;
+			Item.useStyle = ItemUseStyleID.Swing;
+			Item.createTile = ModContent.TileType<Vault>();
+			Item.consumable = true;
+		}
+
+		public override void AddRecipes()
+		{
+			Recipe.Create(Item.type)
+				.AddIngredient(ItemID.GoldBar, 10)
+				.AddTile(TileID.WorkBenches)
+				.Register();
+
+			Recipe.Create(Item.type)
+				.AddIngredient(ItemID.PlatinumBar, 10)
+				.AddTile(TileID.WorkBenches)
+				.Register();
+		}
+	}
 }
 
