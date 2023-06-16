@@ -1,1 +1,4 @@
-DragonVault is a pretty cool mod, it does...this. Modify this file with a description of your mod.
+DragonVault is a simple mod which allows for world-based item storage. Powered by the same GUI as DragonLens' Item spawner, your items will be easier to find than ever before.
+
+You'll also be able to install Dragonstones in your vault as you progress the game, unlocking new powers and enhancements for your vault's storage system.
+
