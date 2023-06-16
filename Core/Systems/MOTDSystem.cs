@@ -11,7 +11,7 @@ namespace DragonVault.Core.Systems
 		{
 			string MOTD = LocalizationHelper.GetText("MOTD", Mod.Version);
 
-			Main.NewText(MOTD, new Color(200, 235, 255));
+			Main.NewText(MOTD, new Color(2255, 235, 140));
 		}
 	}
 }

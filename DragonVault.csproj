@@ -8,9 +8,9 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="tModLoader.CodeAssist" Version="0.1.*" />
+    <None Remove="Localization\Tools\en-US_Mods.DragonVault.Tools.hjson" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Localization\" />
+    <PackageReference Include="tModLoader.CodeAssist" Version="0.1.*" />
   </ItemGroup>
 </Project>

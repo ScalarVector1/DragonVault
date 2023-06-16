@@ -1,0 +1,45 @@
+ItemSpawner: {
+	DisplayName: Item spawner
+	Description: Spawn any item in the game!
+
+	FilterCategories: {
+		Mod: Mod filters
+		Damage: Damage filters
+		Misc: Misc filters
+	}
+
+	Filters: {
+		DamageClass.Description: Items with {0}
+		Mod.Description: Items added by the mod {0}
+
+		Vanilla: {
+			Name: Vanilla
+			Description: Items from the base game
+		}
+
+		AnyDamage: {
+			Name: Any damage
+			Description: Any item that deals damage
+		}
+
+		Accessory: {
+			Name: Accessory
+			Description: Any item that can be equipped as an accessory
+		}
+
+		Armor: {
+			Name: Armor
+			Description: Any item that can be equipped as armor
+		}
+
+		Placeable: {
+			Name: Placeable
+			Description: Any item that palces a tile
+		}
+
+		Deprecated: {
+			Name: Deprecated
+			Description: Any item that is deprecated (ItemID.Sets.Deprecated)
+		}
+	}
+}

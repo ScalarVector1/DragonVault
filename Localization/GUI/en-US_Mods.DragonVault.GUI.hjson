@@ -1,0 +1,23 @@
+Browser: {
+	ListView: List view
+	Filters: Filters
+
+	ButtonSizeSlider: {
+		Name: Button scale
+		Tooltip: Drag to adjust the size of buttons in the browser
+	}
+}
+
+DraggableUIState: {
+	Close: Close
+
+	UserGuide: {
+		Name: User guide
+		Tooltip: Open the user guide for this tool in the browser
+	}
+}
+
+ToggleButton: {
+	On: On
+	Off: Off
+}
