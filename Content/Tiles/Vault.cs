@@ -20,6 +20,7 @@ namespace DragonVault.Content.Tiles
 		{
 			VaultBrowser state = UILoader.GetUIState<VaultBrowser>();
 			state.visible = true;
+			state.canWithdraw = true;
 
 			if (!state.initialized)
 			{

@@ -17,6 +17,8 @@ namespace DragonVault.Content.GUI.Vault
 {
 	internal class VaultBrowser : Browser
 	{
+		public bool canWithdraw = false;
+
 		public StorageButton button;
 
 		public StoneSlot[] slots;
@@ -121,7 +123,7 @@ namespace DragonVault.Content.GUI.Vault
 		{
 			if (BoundingBox.Contains(Main.MouseScreen.ToPoint()) && Main.mouseItem != null && !Main.mouseItem.IsAir)
 			{
-				var item = Main.mouseItem.Clone();
+				Item item = Main.mouseItem.Clone();
 				bool added = StorageSystem.TryAddItem(Main.mouseItem, out ItemEntry newEntry);
 
 				if (added && newEntry != null)
@@ -168,6 +170,12 @@ namespace DragonVault.Content.GUI.Vault
 
 		public override void SafeClick(UIMouseEvent evt)
 		{
+			if (!UILoader.GetUIState<VaultBrowser>().canWithdraw)
+			{
+				Main.NewText("Requires Azure Dragonstone", new Color(50, 50, 255));
+				return;
+			}
+
 			int withdrawn = Math.Min(entry.item.maxStack, entry.simStack);
 
 			if (Main.keyState.PressingShift())
@@ -196,6 +204,12 @@ namespace DragonVault.Content.GUI.Vault
 
 		public override void SafeRightMouseDown(UIMouseEvent evt)
 		{
+			if (!UILoader.GetUIState<VaultBrowser>().canWithdraw)
+			{
+				Main.NewText("Requires Azure Dragonstone", new Color(50, 50, 255));
+				return;
+			}
+
 			stackDelay = 30;
 
 			if (Main.mouseItem.IsAir)
@@ -227,6 +241,9 @@ namespace DragonVault.Content.GUI.Vault
 
 			// Prevents net spam... a tad inconvenient but.. oh well
 			if (Main.netMode != NetmodeID.SinglePlayer)
+				return;
+
+			if (!UILoader.GetUIState<VaultBrowser>().canWithdraw)
 				return;
 
 			// Allows for "Hold RMB to get more

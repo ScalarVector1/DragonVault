@@ -82,6 +82,8 @@ namespace DragonVault.Content.GUI.Vault
 					SoundEngine.PlaySound(SoundID.DD2_WitherBeastDeath);
 					SoundEngine.PlaySound(SoundID.DD2_WitherBeastAuraPulse);
 
+					Main.NewText($"{stone.Name} activated for {Main.worldName}!", Color.Lerp(stone.color, Color.White, 0.5f));
+
 					VaultNet.Data();
 				}
 			}

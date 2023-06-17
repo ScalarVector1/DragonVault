@@ -41,6 +41,9 @@ namespace DragonVault.Core.Networking
 		/// <param name="ignoreClient"></param>
 		public static void OnJoinReq(int sequence, int toClient = -1, int ignoreClient = -1)
 		{
+			if (Main.netMode == NetmodeID.SinglePlayer) //single player dosent care about packets
+				return;
+
 			ModPacket packet = ModLoader.GetMod("DragonVault").GetPacket();
 			packet.Write("JoinReq");
 			packet.Write(sequence);
@@ -57,6 +60,9 @@ namespace DragonVault.Core.Networking
 		/// <param name="ignoreClient"></param>
 		public static void SendOnJoin(int sequence, int maxSequence, int toClient = -1, int ignoreClient = -1)
 		{
+			if (Main.netMode == NetmodeID.SinglePlayer) //single player dosent care about packets
+				return;
+
 			ItemEntry thisItem = StorageSystem.vault[sequence];
 
 			ModPacket packet = ModLoader.GetMod("DragonVault").GetPacket();
@@ -71,6 +77,9 @@ namespace DragonVault.Core.Networking
 
 		public static void DataReq(int toClient = -1, int ignoreClient = -1)
 		{
+			if (Main.netMode == NetmodeID.SinglePlayer) //single player dosent care about packets
+				return;
+
 			ModPacket packet = ModLoader.GetMod("DragonVault").GetPacket();
 			packet.Write("DataReq");
 
@@ -79,6 +88,9 @@ namespace DragonVault.Core.Networking
 
 		public static void Data(int toClient = -1, int ignoreClient = -1)
 		{
+			if (Main.netMode == NetmodeID.SinglePlayer) //single player dosent care about packets
+				return;
+
 			ModPacket packet = ModLoader.GetMod("DragonVault").GetPacket();
 			packet.Write("Data");
 			packet.Write(StorageSystem.baseCapacity);
