@@ -62,11 +62,12 @@ namespace DragonVault.Core.Systems
 						return true;
 				}
 
-				return false;
+				newEntry = NewEntry(newItem.Clone());
+				return newEntry.TryDeposit(newItem);
 			}
 			else
 			{
-				newEntry = NewEntry(newItem.type);
+				newEntry = NewEntry(newItem.Clone());
 				return newEntry.TryDeposit(newItem);
 			}
 		}
@@ -76,18 +77,15 @@ namespace DragonVault.Core.Systems
 		/// </summary>
 		/// <param name="type">The item type for this entry</param>
 		/// <returns>The newly created entry</returns>
-		public static ItemEntry NewEntry(int type)
+		public static ItemEntry NewEntry(Item item)
 		{
-			var dummy = new Item();
-			dummy.SetDefaults(type);
+			ItemEntry newEntry = new(item);
 
-			ItemEntry newEntry = new(dummy);
-
-			if (vaultByID.ContainsKey(type))
-				vaultByID[type].Add(newEntry);
+			if (vaultByID.ContainsKey(item.type))
+				vaultByID[item.type].Add(newEntry);
 
 			else
-				vaultByID.Add(type, new List<ItemEntry>() { newEntry });
+				vaultByID.Add(item.type, new List<ItemEntry>() { newEntry });
 
 			vault.Add(newEntry);
 
@@ -202,7 +200,7 @@ namespace DragonVault.Core.Systems
 				return false;
 
 			// Can be stacked
-			if (!item.ModItem?.CanStack(newItem) ?? false)
+			if (!Helpers.Helper.CanStack(newItem, item))
 				return false;
 
 			int amountToAdd = newItem.stack;

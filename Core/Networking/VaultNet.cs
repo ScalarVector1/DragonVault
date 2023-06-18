@@ -11,6 +11,8 @@ namespace DragonVault.Core.Networking
 			if (Main.netMode == NetmodeID.SinglePlayer) //single player dosent care about packets
 				return;
 
+			ModLoader.GetMod("DragonVault").Logger.Info($"Sending withdrawl of {amount} {item.Name}");
+
 			ModPacket packet = ModLoader.GetMod("DragonVault").GetPacket();
 			packet.Write("Withdrawl");
 			packet.Write(amount);
@@ -23,6 +25,8 @@ namespace DragonVault.Core.Networking
 		{
 			if (Main.netMode == NetmodeID.SinglePlayer) //single player dosent care about packets
 				return;
+
+			ModLoader.GetMod("DragonVault").Logger.Info($"Sending deposit of {amount} {item.Name}");
 
 			ModPacket packet = ModLoader.GetMod("DragonVault").GetPacket();
 			packet.Write("Deposit");

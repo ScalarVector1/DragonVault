@@ -22,10 +22,11 @@ namespace DragonVault
 			{
 				int amount = reader.ReadInt32();
 				Item item = ItemIO.Receive(reader);
+				Item toSync = item.Clone();
 
 				Logger.Info($"Withdrawl of {amount} {item.Name} recieved.");
 
-				ItemEntry entry = StorageSystem.vaultByID[item.type].Find(n => n.item == item);
+				ItemEntry entry = StorageSystem.vaultByID[item.type].Find(n => Helpers.Helper.CanStack(n.item, item));
 
 				if (entry is null)
 				{
@@ -35,19 +36,21 @@ namespace DragonVault
 
 				entry.simStack -= amount;
 
-				if (entry.CheckGone())
+				if (entry.CheckGone() && Main.netMode != NetmodeID.Server)
 					VaultBrowser.Rebuild();
 
 				if (Main.netMode == NetmodeID.Server)
-					VaultNet.SendWithdrawl(amount, item, -1, whoAmI);
+					VaultNet.SendWithdrawl(amount, toSync, -1, whoAmI);
 			}
 			else if (type == "Deposit")
 			{
 				int amount = reader.ReadInt32();
 				Item item = ItemIO.Receive(reader);
+				Item toSync = item.Clone();
 
 				Logger.Info($"Deposit of {amount} {item.Name} recieved.");
 
+				item.stack = amount;
 				bool result = StorageSystem.TryAddItem(item, out ItemEntry newEntry);
 
 				if (!result)
@@ -56,8 +59,11 @@ namespace DragonVault
 					return;
 				}
 
+				if (newEntry != null && Main.netMode != NetmodeID.Server)
+					VaultBrowser.Rebuild();
+
 				if (Main.netMode == NetmodeID.Server)
-					VaultNet.SendDeposit(amount, item, -1, whoAmI);
+					VaultNet.SendDeposit(amount, toSync, -1, whoAmI);
 			}
 			else if (type == "JoinReq")
 			{
