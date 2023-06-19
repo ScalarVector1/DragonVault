@@ -35,6 +35,7 @@ namespace DragonVault.Content.GUI
 				VaultBrowser state = UILoader.GetUIState<VaultBrowser>();
 				state.visible = true;
 				state.canWithdraw = (StorageSystem.stoneFlags & Items.Dragonstones.Stones.Azure) != 0;
+				state.fromTile = false;
 
 				if (!state.initialized)
 				{

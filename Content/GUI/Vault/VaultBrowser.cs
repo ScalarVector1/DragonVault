@@ -9,6 +9,7 @@ using DragonVault.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader.UI.Elements;
 using Terraria.UI;
@@ -18,6 +19,7 @@ namespace DragonVault.Content.GUI.Vault
 	internal class VaultBrowser : Browser
 	{
 		public bool canWithdraw = false;
+		public bool fromTile = false;
 
 		public StorageButton button;
 
@@ -117,6 +119,29 @@ namespace DragonVault.Content.GUI.Vault
 			int max = StorageSystem.MaxCapacity;
 
 			Utils.DrawBorderStringBig(spriteBatch, $"{used}/{max}", basePos + new Vector2(24, 48), Color.White, 0.4f);
+		}
+
+		public override void DraggableUdpate(GameTime gameTime)
+		{
+			bool nearVault = false;
+			var tilePos = (Main.LocalPlayer.Center / 16).ToPoint16();
+
+			for (int x = -10; x < 10; x++)
+			{
+				for (int y = -10; y < 10; y++)
+				{
+					Point16 off = new(x, y);
+					Point16 target = tilePos + off;
+
+					Tile tile = Framing.GetTileSafely(target);
+
+					if (tile.HasTile && tile.TileType == ModContent.TileType<Tiles.Vault>())
+						nearVault = true;
+				}
+			}
+
+			if (fromTile && !nearVault)
+				visible = false;
 		}
 
 		public override void SafeClick(UIMouseEvent evt)
@@ -223,7 +248,7 @@ namespace DragonVault.Content.GUI.Vault
 
 				VaultNet.SendWithdrawl(1, entry.item);
 			}
-			else if (Main.mouseItem.type == entry.item.type)
+			else if (Main.mouseItem.type == entry.item.type && Helper.CanStack(Main.mouseItem, entry.item) && Main.mouseItem.stack < Main.mouseItem.maxStack)
 			{
 				Main.mouseItem.stack++;
 				entry.simStack--;
