@@ -14,7 +14,13 @@ namespace DragonVault.Content.Items.Dragonstones
 					break;
 
 				case NPCID.EaterofWorldsHead:
-					npcLoot.Add(ItemDropRule.ByCondition(new Conditions.LegacyHack_IsABoss(), ModContent.ItemType<CitrineStone>()));
+				case NPCID.EaterofWorldsBody:
+				case NPCID.EaterofWorldsTail:
+
+					IItemDropRule rule = new LeadingConditionRule(new Conditions.LegacyHack_IsABoss());
+					rule.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CitrineStone>()));
+
+					npcLoot.Add(rule);
 					break;
 
 				case NPCID.BrainofCthulhu:
