@@ -119,6 +119,8 @@ namespace DragonVault.Content.GUI
 			listButton.OnLeftClick += (n, k) => listMode = !listMode;
 			Append(listButton);
 
+			FilterEvent = null;
+
 			filterButton = new("DragonVault/Assets/GUI/Filter", () => filtersVisible, LocalizationHelper.GetGUIText("Browser.Filters"));
 			filterButton.OnLeftClick += (n, k) =>
 			{
