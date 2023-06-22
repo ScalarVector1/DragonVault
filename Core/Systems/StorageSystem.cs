@@ -1,6 +1,8 @@
 ﻿using DragonVault.Content.GUI.Vault;
 using DragonVault.Content.Items.Dragonstones;
+using DragonVault.Content.Tiles;
 using DragonVault.Core.Loaders.UILoading;
+using DragonVault.Core.Networking;
 using System.Collections.Generic;
 using Terraria.ID;
 using Terraria.ModLoader.IO;
@@ -11,6 +13,7 @@ namespace DragonVault.Core.Systems
 	{
 		public static List<ItemEntry> vault = new();
 		public static Dictionary<int, List<ItemEntry>> vaultByID = new();
+		public static List<Item> craftingCache = new();
 
 		public static int baseCapacity = 20000;
 		public static int extraCapacity = 0;
@@ -169,6 +172,63 @@ namespace DragonVault.Core.Systems
 				if ((stoneFlags & stone) > 0)
 					(Dragonstone.samples[stone].ModItem as Dragonstone).OnSlot();
 			}
+		}
+	}
+
+	internal class StoragePlayer : ModPlayer
+	{
+		public override IEnumerable<Item> AddMaterialsForCrafting(out ItemConsumedCallback itemConsumedCallback)
+		{
+			if ((StorageSystem.stoneFlags & Stones.Citrine) <= 0)
+			{
+				itemConsumedCallback = (a, b) => { };
+				return new List<Item>();
+			}
+
+			if ((StorageSystem.stoneFlags & Stones.Azure) <= 0 && !Player.adjTile[ModContent.TileType<Vault>()])
+			{
+				itemConsumedCallback = (a, b) => { };
+				return new List<Item>();
+			}
+
+			List<Item> toCraft = new();
+
+			foreach (ItemEntry item in StorageSystem.vault)
+			{
+				item.item.stack = item.simStack;
+				toCraft.Add(item.item);
+			}
+
+			itemConsumedCallback = (item, index) =>
+			{
+				if (StorageSystem.vaultByID.ContainsKey(item.type))
+				{
+					List<ItemEntry> possibles = StorageSystem.vaultByID[item.type];
+
+					foreach (ItemEntry possible in possibles)
+					{
+						if (Helpers.Helper.CanStack(possible.item, item))
+						{
+							int withdrawl = possible.simStack - item.stack;
+							possible.simStack -= withdrawl;
+
+							if (possible.CheckGone())
+								VaultBrowser.Rebuild();
+
+							VaultNet.SendWithdrawl(withdrawl, possible.item);
+							return;
+						}
+
+						Mod.Logger.Error("Tried to overdraw when crafting!");
+					}
+				}
+				else
+				{
+					Mod.Logger.Error("Tried to overdraw when crafting!");
+				}
+			};
+
+			return toCraft;
 		}
 	}
 

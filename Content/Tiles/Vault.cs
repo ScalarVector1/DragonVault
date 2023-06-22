@@ -1,5 +1,6 @@
 ﻿using DragonVault.Content.GUI.Vault;
 using DragonVault.Core.Loaders.UILoading;
+using DragonVault.Core.Systems;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
@@ -30,6 +31,17 @@ namespace DragonVault.Content.Tiles
 			}
 
 			return true;
+		}
+
+		public override void AnimateTile(ref int frame, ref int frameCounter)
+		{
+			frame = 0;
+
+			if ((StorageSystem.stoneFlags & Items.Dragonstones.Stones.Rose) > 0)
+				frame = 1;
+
+			if ((StorageSystem.stoneFlags & Items.Dragonstones.Stones.Midnight) > 0)
+				frame = 2;
 		}
 
 		#region quick setter
