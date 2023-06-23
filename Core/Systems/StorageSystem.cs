@@ -185,7 +185,9 @@ namespace DragonVault.Core.Systems
 				return new List<Item>();
 			}
 
-			if ((StorageSystem.stoneFlags & Stones.Azure) <= 0 && !Player.adjTile[ModContent.TileType<Vault>()])
+			bool nearValidTile = Player.adjTile[ModContent.TileType<Vault>()] || Player.adjTile[ModContent.TileType<CraftingCrucible>()];
+
+			if ((StorageSystem.stoneFlags & Stones.Azure) <= 0 && !nearValidTile)
 			{
 				itemConsumedCallback = (a, b) => { };
 				return new List<Item>();

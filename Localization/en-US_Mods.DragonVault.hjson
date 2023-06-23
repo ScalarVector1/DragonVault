@@ -1,4 +1,7 @@
-Tiles.Vault.MapEntry: Vault
+Tiles: {
+	Vault.MapEntry: Vault
+	CraftingCrucible.MapEntry: Crafting Crucible
+}
 
 Items: {
 	AzureStone: {
@@ -15,6 +18,7 @@ Items: {
 		Tooltip:
 			'''
 			Allows the vault to be used as hardmode crafting stations
+			Your crafting crucible has infinite range
 			Dropped by any mechanical boss
 			'''
 	}
@@ -24,6 +28,7 @@ Items: {
 		Tooltip:
 			'''
 			Allows the vault to be used as basic crafting stations
+			Allows you to craft from your vault near it and your crafting crucible
 			Dropped by the Eater of Worlds or Brain of Cthulu
 			'''
 	}
@@ -76,5 +81,10 @@ Items: {
 	VaultItem: {
 		DisplayName: Dragon Vault
 		Tooltip: The ultimate storage solution! (magic not included)
+	}
+
+	CraftingCrucibleItem: {
+		DisplayName: Crafting Crucible Item
+		Tooltip: ""
 	}
 }
