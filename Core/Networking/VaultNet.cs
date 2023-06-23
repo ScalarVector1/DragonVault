@@ -102,6 +102,35 @@ namespace DragonVault.Core.Networking
 
 			packet.Send(toClient, ignoreClient);
 		}
+
+		public static void CraftingDataRequest(int toClient = -1, int ignoreClient = -1)
+		{
+			if (Main.netMode == NetmodeID.SinglePlayer) //single player dosent care about packets
+				return;
+
+			ModPacket packet = ModLoader.GetMod("DragonVault").GetPacket();
+			packet.Write("CraftingDataReq");
+
+			packet.Send(toClient, ignoreClient);
+		}
+
+		public static void CraftingData(int toClient = -1, int ignoreClient = -1)
+		{
+			if (Main.netMode == NetmodeID.SinglePlayer) //single player dosent care about packets
+				return;
+
+			ModPacket packet = ModLoader.GetMod("DragonVault").GetPacket();
+			packet.Write("CraftingData");
+			packet.Write(CraftingSystem.slots);
+			packet.Write(CraftingSystem.stations.Count);
+
+			for (int k = 0; k < CraftingSystem.stations.Count; k++)
+			{
+				ItemIO.Send(CraftingSystem.stations[k], packet);
+			}
+
+			packet.Send(toClient, ignoreClient);
+		}
 	}
 
 	internal class NetPlayer : ModPlayer
@@ -111,6 +140,7 @@ namespace DragonVault.Core.Networking
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 			{
 				VaultNet.DataReq();
+				VaultNet.CraftingDataRequest();
 				VaultNet.OnJoinReq(0);
 			}
 		}

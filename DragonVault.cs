@@ -145,6 +145,33 @@ namespace DragonVault
 				if (Main.netMode == NetmodeID.Server)
 					VaultNet.Data(-1, whoAmI);
 			}
+			else if (type == "CraftingDataReq")
+			{
+				// Only the server should recieve these
+				if (Main.netMode != NetmodeID.Server)
+					return;
+
+				Logger.Info($"Request for crafting data recieved.");
+
+				VaultNet.CraftingData(whoAmI);
+			}
+			else if (type == "CraftingData")
+			{
+				CraftingSystem.slots = reader.ReadInt32();
+				int readTo = reader.ReadInt32();
+
+				CraftingSystem.stations = new();
+
+				for (int k = 0; k < readTo; k++)
+				{
+					CraftingSystem.stations.Add(ItemIO.Receive(reader));
+				}
+
+				Logger.Info($"Crafting data recieved.");
+
+				if (Main.netMode == NetmodeID.Server)
+					VaultNet.CraftingData(-1, whoAmI);
+			}
 		}
 	}
 }

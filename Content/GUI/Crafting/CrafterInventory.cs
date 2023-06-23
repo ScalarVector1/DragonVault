@@ -1,10 +1,10 @@
 ﻿using DragonVault.Core.Loaders.UILoading;
+using DragonVault.Core.Networking;
 using DragonVault.Core.Systems;
 using DragonVault.Core.Systems.ThemeSystem;
 using DragonVault.Helpers;
 using System.Collections.Generic;
 using System.Linq;
-using Terraria.ID;
 using Terraria.ModLoader.UI.Elements;
 using Terraria.UI;
 
@@ -54,9 +54,6 @@ namespace DragonVault.Content.GUI.Crafting
 
 		public override void AdjustPositions(Vector2 newPos)
 		{
-			if (Main.netMode != NetmodeID.SinglePlayer)
-				visible = false;
-
 			slots.Width.Set(260, 0);
 			slots.Height.Set(400, 0);
 			height = 480;
@@ -161,6 +158,7 @@ namespace DragonVault.Content.GUI.Crafting
 					Main.mouseItem.TurnToAir();
 
 				Main.NewText($"{clone.Name} has been added to the crafting crucible for {Main.worldName}!");
+				VaultNet.CraftingData();
 			}
 		}
 
@@ -228,6 +226,7 @@ namespace DragonVault.Content.GUI.Crafting
 				UILoader.GetUIState<CrafterInventory>().Reset();
 
 				Main.NewText($"Crafting slots increased to {CraftingSystem.slots} for {Main.worldName}!", Color.Gold);
+				VaultNet.CraftingData();
 			}
 			else
 			{
