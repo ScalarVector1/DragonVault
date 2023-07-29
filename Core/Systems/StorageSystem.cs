@@ -15,7 +15,7 @@ namespace DragonVault.Core.Systems
 		public static Dictionary<int, List<ItemEntry>> vaultByID = new();
 		public static List<Item> craftingCache = new();
 
-		public static int baseCapacity = 20000;
+		public static int baseCapacity = 5000;
 		public static int extraCapacity = 0;
 
 		public static Stones stoneFlags = 0;
@@ -102,7 +102,7 @@ namespace DragonVault.Core.Systems
 		{
 			vault = new();
 			vaultByID = new();
-			baseCapacity = 20000;
+			baseCapacity = 5000;
 			stoneFlags = 0;
 
 			for (int k = 0; k < 8; k++)

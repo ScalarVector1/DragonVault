@@ -316,10 +316,10 @@ namespace DragonVault.Content.GUI.Vault
 
 		public override void LeftClick(UIMouseEvent evt)
 		{
-			if (Main.LocalPlayer.CanAfford(Item.buyPrice(0, StorageSystem.baseCapacity / 5000)))
+			if (Main.LocalPlayer.CanAfford(Item.buyPrice(0, StorageSystem.baseCapacity / 1000)))
 			{
-				Main.LocalPlayer.PayCurrency(Item.buyPrice(0, StorageSystem.baseCapacity / 5000, 0, 0));
-				StorageSystem.baseCapacity += 20000;
+				Main.LocalPlayer.PayCurrency(Item.buyPrice(0, StorageSystem.baseCapacity / 1000, 0, 0));
+				StorageSystem.baseCapacity += 2000;
 				Main.NewText($"Vault size increased to {StorageSystem.MaxCapacity} for {Main.worldName}!", Color.Gold);
 
 				VaultNet.Data();

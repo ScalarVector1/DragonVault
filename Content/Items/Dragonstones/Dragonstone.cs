@@ -111,7 +111,7 @@ namespace DragonVault.Content.Items.Dragonstones
 
 		public override void OnSlot()
 		{
-			StorageSystem.extraCapacity += 50000;
+			StorageSystem.extraCapacity += 5000;
 		}
 
 		public override void Reset()
@@ -166,7 +166,7 @@ namespace DragonVault.Content.Items.Dragonstones
 
 		public override void OnSlot()
 		{
-			StorageSystem.extraCapacity += 100000;
+			StorageSystem.extraCapacity += 10000;
 		}
 
 		public override void Reset()
