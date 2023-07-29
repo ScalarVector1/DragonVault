@@ -64,7 +64,7 @@ Items: {
 		DisplayName: Rose Dragonstone
 		Tooltip:
 			'''
-			Increases capacity by 50000
+			Increases capacity by 5000
 			Dropped by Eye of Cthulu
 			'''
 	}
@@ -73,7 +73,7 @@ Items: {
 		DisplayName: Verdant Dragonstone
 		Tooltip:
 			'''
-			Increases capacity by 100000
+			Increases capacity by 10000
 			Dropped by the Wall of Flesh
 			'''
 	}

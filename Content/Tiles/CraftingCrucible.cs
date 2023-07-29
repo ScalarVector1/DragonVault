@@ -161,14 +161,12 @@ namespace DragonVault.Content.Tiles
 			Recipe.Create(Item.type)
 				.AddIngredient(ItemID.GoldBar, 8)
 				.AddIngredient(ItemID.LesserHealingPotion, 1)
-				.AddIngredient(ItemID.LesserManaPotion, 1)
 				.AddTile(TileID.WorkBenches)
 				.Register();
 
 			Recipe.Create(Item.type)
 				.AddIngredient(ItemID.PlatinumBar, 8)
 				.AddIngredient(ItemID.LesserHealingPotion, 1)
-				.AddIngredient(ItemID.LesserManaPotion, 1)
 				.AddTile(TileID.WorkBenches)
 				.Register();
 		}

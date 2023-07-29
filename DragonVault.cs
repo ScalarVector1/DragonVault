@@ -2,8 +2,10 @@ global using Microsoft.Xna.Framework;
 global using Microsoft.Xna.Framework.Graphics;
 global using Terraria;
 global using Terraria.ModLoader;
+using DragonVault.Content.GUI.Crafting;
 using DragonVault.Content.GUI.Vault;
 using DragonVault.Content.Items.Dragonstones;
+using DragonVault.Core.Loaders.UILoading;
 using DragonVault.Core.Networking;
 using DragonVault.Core.Systems;
 using System.IO;
@@ -171,6 +173,8 @@ namespace DragonVault
 
 				if (Main.netMode == NetmodeID.Server)
 					VaultNet.CraftingData(-1, whoAmI);
+				else
+					UILoader.GetUIState<CrafterInventory>().Reset();
 			}
 		}
 	}
