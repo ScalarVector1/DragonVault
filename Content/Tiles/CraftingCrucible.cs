@@ -14,7 +14,7 @@ namespace DragonVault.Content.Tiles
 	{
 		public override void SetStaticDefaults()
 		{
-			QuickSetFurniture(this, 4, 4, DustID.Gold, SoundID.Tink, Color.Gold);
+			QuickSetFurniture(this, 4, 3, DustID.Gold, SoundID.Tink, Color.Gold);
 		}
 
 		public override bool RightClick(int i, int j)

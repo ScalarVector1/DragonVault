@@ -123,6 +123,15 @@ namespace DragonVault.Content.GUI.Vault
 
 		public override void DraggableUpdate(GameTime gameTime)
 		{
+			Main.playerInventory = true;
+
+			if (Main.LocalPlayer.controlInv)
+			{
+				visible = false;
+				Main.playerInventory = false;
+				return;
+			}
+
 			bool nearVault = false;
 			var tilePos = (Main.LocalPlayer.Center / 16).ToPoint16();
 

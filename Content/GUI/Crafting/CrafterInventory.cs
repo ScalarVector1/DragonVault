@@ -71,6 +71,15 @@ namespace DragonVault.Content.GUI.Crafting
 
 		public override void DraggableUpdate(GameTime gameTime)
 		{
+			Main.playerInventory = true;
+
+			if (Main.LocalPlayer.controlInv)
+			{
+				visible = false;
+				Main.playerInventory = false;
+				return;
+			}
+
 			bool nearTile = false;
 			var tilePos = (Main.LocalPlayer.Center / 16).ToPoint16();
 
