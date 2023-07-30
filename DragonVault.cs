@@ -96,10 +96,11 @@ namespace DragonVault
 				if (!result)
 				{
 					Logger.Warn("Failed to add an item to the vault on sync! Did something else fill it up?");
-					return;
 				}
-
-				Logger.Info($"Data for item {sequence} ({item.Name}) recieved.");
+				else
+				{
+					Logger.Info($"Data for item {sequence} ({item.Name}) recieved.");
+				}
 
 				if (sequence < maxSequence)
 					VaultNet.OnJoinReq(sequence + 1, maxSequence);

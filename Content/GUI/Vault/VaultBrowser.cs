@@ -169,18 +169,21 @@ namespace DragonVault.Content.GUI.Vault
 	{
 		public ItemEntry entry;
 		public int stackDelay = 0;
+		public Item renderCopy;
 
 		public override string Identifier => entry.item.Name;
 
 		public ItemButton(ItemEntry item, Browser browser) : base(browser)
 		{
-			this.entry = item;
+			entry = item;
+			renderCopy = entry.item.Clone();
+			renderCopy.stack = 1;
 		}
 
 		public override void SafeDraw(SpriteBatch spriteBatch, Rectangle iconBox)
 		{
 			Main.inventoryScale = 36 / 52f * iconBox.Width / 36f;
-			ItemSlot.Draw(spriteBatch, ref entry.item, 21, GetDimensions().Position());
+			ItemSlot.Draw(spriteBatch, ref renderCopy, 21, GetDimensions().Position());
 
 			Utils.DrawBorderString(spriteBatch, entry.simStack > 999 ? $"{entry.simStack / 1000}k" : $"{entry.simStack}", GetDimensions().ToRectangle().BottomLeft() + new Vector2(2, -16), Color.White, 0.8f);
 
