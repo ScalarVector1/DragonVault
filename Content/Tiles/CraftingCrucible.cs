@@ -34,11 +34,13 @@ namespace DragonVault.Content.Tiles
 
 		public override void NearbyEffects(int i, int j, bool closer)
 		{
-			int[] tiles = new int[CraftingSystem.stations.Count];
+			int count = CraftingSystem.stations?.Count ?? 0;
 
-			for (int k = 0; k < CraftingSystem.stations.Count; k++)
+			int[] tiles = new int[count];
+
+			for (int k = 0; k < count; k++)
 			{
-				tiles[k] = CraftingSystem.stations[k].createTile;
+				tiles[k] = CraftingSystem.stations[k]?.createTile ?? -1;
 			}
 
 			AdjTiles = tiles;

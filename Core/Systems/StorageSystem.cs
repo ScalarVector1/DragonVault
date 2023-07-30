@@ -187,6 +187,9 @@ namespace DragonVault.Core.Systems
 
 			bool nearValidTile = Player.adjTile[ModContent.TileType<Vault>()] || Player.adjTile[ModContent.TileType<CraftingCrucible>()];
 
+			if ((StorageSystem.stoneFlags & Stones.Cerulean) > 0 && Player.adjTile[TileID.TeleportationPylon])
+				nearValidTile = true;
+
 			if ((StorageSystem.stoneFlags & Stones.Azure) <= 0 && !nearValidTile)
 			{
 				itemConsumedCallback = (a, b) => { };

@@ -18,7 +18,7 @@ Items: {
 		Tooltip:
 			'''
 			Allows the vault to be used as hardmode crafting stations
-			Your crafting crucible has infinite range
+			Your crafting crucible can be used at pylons
 			Dropped by any mechanical boss
 			'''
 	}
@@ -84,7 +84,7 @@ Items: {
 	}
 
 	CraftingCrucibleItem: {
-		DisplayName: Crafting Crucible Item
-		Tooltip: ""
+		DisplayName: Crafting Crucible
+		Tooltip: Melt all your crafting stations into a highly-useable slurry!
 	}
 }

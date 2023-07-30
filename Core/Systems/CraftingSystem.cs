@@ -1,5 +1,6 @@
 ﻿using DragonVault.Content.Items.Dragonstones;
 using System.Collections.Generic;
+using Terraria.ID;
 using Terraria.ModLoader.IO;
 
 namespace DragonVault.Core.Systems
@@ -32,7 +33,7 @@ namespace DragonVault.Core.Systems
 	{
 		public override int[] AdjTiles(int type)
 		{
-			if ((StorageSystem.stoneFlags & Stones.Cerulean) > 0)
+			if (type == TileID.TeleportationPylon && (StorageSystem.stoneFlags & Stones.Cerulean) > 0)
 			{
 				int[] newAdj = new int[CraftingSystem.stations.Count];
 
@@ -44,7 +45,7 @@ namespace DragonVault.Core.Systems
 				return newAdj;
 			}
 
-			return default;
+			return new int[0];
 		}
 	}
 }
