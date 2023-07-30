@@ -121,7 +121,7 @@ namespace DragonVault.Content.GUI.Vault
 			Utils.DrawBorderStringBig(spriteBatch, $"{used}/{max}", basePos + new Vector2(24, 48), Color.White, 0.4f);
 		}
 
-		public override void DraggableUdpate(GameTime gameTime)
+		public override void DraggableUpdate(GameTime gameTime)
 		{
 			bool nearVault = false;
 			var tilePos = (Main.LocalPlayer.Center / 16).ToPoint16();

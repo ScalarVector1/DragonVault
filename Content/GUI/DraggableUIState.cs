@@ -54,7 +54,7 @@ namespace DragonVault.Content.GUI
 
 		public virtual void SafeOnInitialize() { }
 
-		public virtual void DraggableUdpate(GameTime gameTime) { }
+		public virtual void DraggableUpdate(GameTime gameTime) { }
 
 		public sealed override void OnInitialize()
 		{
@@ -125,7 +125,7 @@ namespace DragonVault.Content.GUI
 			if (BoundingBox.Contains(Main.MouseScreen.ToPoint()))
 				Main.LocalPlayer.mouseInterface = true;
 
-			DraggableUdpate(gameTime);
+			DraggableUpdate(gameTime);
 		}
 	}
 }

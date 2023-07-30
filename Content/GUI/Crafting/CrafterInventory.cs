@@ -5,6 +5,7 @@ using DragonVault.Core.Systems.ThemeSystem;
 using DragonVault.Helpers;
 using System.Collections.Generic;
 using System.Linq;
+using Terraria.DataStructures;
 using Terraria.ModLoader.UI.Elements;
 using Terraria.UI;
 
@@ -66,6 +67,29 @@ namespace DragonVault.Content.GUI.Crafting
 
 			button.Left.Set(newPos.X - 180, 0);
 			button.Top.Set(newPos.Y, 0);
+		}
+
+		public override void DraggableUpdate(GameTime gameTime)
+		{
+			bool nearTile = false;
+			var tilePos = (Main.LocalPlayer.Center / 16).ToPoint16();
+
+			for (int x = -10; x < 10; x++)
+			{
+				for (int y = -10; y < 10; y++)
+				{
+					Point16 off = new(x, y);
+					Point16 target = tilePos + off;
+
+					Tile tile = Framing.GetTileSafely(target);
+
+					if (tile.HasTile && tile.TileType == ModContent.TileType<Tiles.CraftingCrucible>())
+						nearTile = true;
+				}
+			}
+
+			if (!nearTile)
+				visible = false;
 		}
 
 		public override void Draw(SpriteBatch spriteBatch)
