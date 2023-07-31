@@ -105,7 +105,7 @@ namespace DragonVault.Content.GUI.Crafting
 		{
 			GUIHelper.DrawBox(spriteBatch, BoundingBox, ThemeHandler.BackgroundColor);
 
-			Texture2D back = ModContent.Request<Texture2D>("DragonLens/Assets/GUI/Gradient").Value;
+			Texture2D back = ModContent.Request<Texture2D>("DragonVault/Assets/GUI/Gradient").Value;
 			var backTarget = new Rectangle((int)basePos.X + 8, (int)basePos.Y + 8, 300, 40);
 			spriteBatch.Draw(back, backTarget, Color.Black * 0.5f);
 
