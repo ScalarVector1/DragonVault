@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "VF9+KLeZmQgCDJPhbK/arIJZm9Ly8fIZ3zG3Fo9oyT8osclJUjsRPYdpIduH41wsnikNuAwxf7a37znjhjV5tA==",
+  "dgSpecHash": "j/xuyNNWZawnce8EJtbc1D0/M/4PhySFOSTrkzz80mTkq+L1UJeQ470Ek8grRBwmHls2xwGiMX7BIB7Fd/fjHA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Alex\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\DragonVault\\DragonVault.csproj",
+  "projectFilePath": "C:\\Users\\alexw\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\DragonVault\\DragonVault.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Alex\\.nuget\\packages\\tmodloader.codeassist\\0.1.5\\tmodloader.codeassist.0.1.5.nupkg.sha512"
+    "C:\\Users\\alexw\\.nuget\\packages\\tmodloader.codeassist\\0.1.5\\tmodloader.codeassist.0.1.5.nupkg.sha512"
   ],
   "logs": []
 }

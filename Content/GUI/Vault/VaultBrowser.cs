@@ -22,6 +22,7 @@ namespace DragonVault.Content.GUI.Vault
 		public bool fromTile = false;
 
 		public StorageButton button;
+		public DepositButton deposit;
 
 		public StoneSlot[] slots;
 
@@ -37,6 +38,9 @@ namespace DragonVault.Content.GUI.Vault
 		{
 			button = new();
 			Append(button);
+
+			deposit = new();
+			Append(deposit);
 
 			slots = new StoneSlot[]
 			{
@@ -101,12 +105,15 @@ namespace DragonVault.Content.GUI.Vault
 			button.Left.Set(newPos.X - 180, 0);
 			button.Top.Set(newPos.Y, 0);
 
+			deposit.Left.Set(newPos.X - 180, 0);
+			deposit.Top.Set(newPos.Y + 85, 0);
+
 			int y = 0;
 
 			foreach (StoneSlot slot in slots)
 			{
 				slot.Left.Set(newPos.X - 74, 0);
-				slot.Top.Set(newPos.Y + 104 + y, 0);
+				slot.Top.Set(newPos.Y + 130 + y, 0);
 				y += 60;
 			}
 		}
@@ -322,7 +329,7 @@ namespace DragonVault.Content.GUI.Vault
 			GUIHelper.DrawBox(spriteBatch, drawBox, ThemeHandler.ButtonColor);
 
 			Utils.DrawBorderString(spriteBatch, $"Increase storage", drawBox.Center.ToVector2() + new Vector2(0, -24), Color.White, 1, 0.5f, 0f);
-			Utils.DrawBorderString(spriteBatch, $"Cost: {StorageSystem.baseCapacity / 5000} gold", drawBox.Center.ToVector2() + new Vector2(0, 0), Color.Gold, 1, 0.5f, 0f);
+			Utils.DrawBorderString(spriteBatch, $"Cost: {StorageSystem.baseCapacity / 1000} gold", drawBox.Center.ToVector2() + new Vector2(0, 0), Color.Gold, 1, 0.5f, 0f);
 
 		}
 
@@ -339,6 +346,50 @@ namespace DragonVault.Content.GUI.Vault
 			else
 			{
 				Main.NewText("Insufficient coins", Color.Red);
+			}
+		}
+	}
+
+	internal class DepositButton : UIElement
+	{
+		public DepositButton()
+		{
+			Width.Set(160, 0);
+			Height.Set(40, 0);
+		}
+
+		public override void Draw(SpriteBatch spriteBatch)
+		{
+			var drawBox = GetDimensions().ToRectangle();
+
+			GUIHelper.DrawBox(spriteBatch, drawBox, ThemeHandler.ButtonColor);
+
+			Utils.DrawBorderString(spriteBatch, $"Deposit all", drawBox.Center.ToVector2(), Color.White, 1, 0.5f, 0.4f);
+
+			if (IsMouseHovering)
+			{
+				Tooltip.SetName("Deposit all");
+				Tooltip.SetTooltip("Deposit all non-favorited items into the vault");
+			}
+		}
+
+		public override void LeftClick(UIMouseEvent evt)
+		{
+			// Ignore hotbar and ammo/coin slots
+			for (int k = 10; k < Main.LocalPlayer.inventory.Length - 9; k++)
+			{
+				var item = Main.LocalPlayer.inventory[k];
+
+				// Ignore favorited items
+				if (!item.IsAir && !item.favorited)
+				{
+					VaultNet.SendDeposit(item.stack, item);
+
+					bool added = StorageSystem.TryAddItem(item, out ItemEntry newEntry);
+
+					if (added && newEntry != null)
+						VaultBrowser.Rebuild();
+				}
 			}
 		}
 	}

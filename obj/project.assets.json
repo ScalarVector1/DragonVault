@@ -31,23 +31,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Alex\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\alexw\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Alex\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\DragonVault\\DragonVault.csproj",
+      "projectUniqueName": "C:\\Users\\alexw\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\DragonVault\\DragonVault.csproj",
       "projectName": "DragonVault",
-      "projectPath": "C:\\Users\\Alex\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\DragonVault\\DragonVault.csproj",
-      "packagesPath": "C:\\Users\\Alex\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Alex\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\DragonVault\\obj\\",
+      "projectPath": "C:\\Users\\alexw\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\DragonVault\\DragonVault.csproj",
+      "packagesPath": "C:\\Users\\alexw\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\alexw\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\DragonVault\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Alex\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\alexw\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -93,7 +94,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.302\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.301\\RuntimeIdentifierGraph.json"
       }
     }
   }

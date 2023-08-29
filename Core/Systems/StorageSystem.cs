@@ -3,6 +3,7 @@ using DragonVault.Content.Items.Dragonstones;
 using DragonVault.Content.Tiles;
 using DragonVault.Core.Loaders.UILoading;
 using DragonVault.Core.Networking;
+using System;
 using System.Collections.Generic;
 using Terraria.ID;
 using Terraria.ModLoader.IO;
@@ -20,7 +21,18 @@ namespace DragonVault.Core.Systems
 
 		public static Stones stoneFlags = 0;
 
-		public static int MaxCapacity => extraCapacity + baseCapacity;
+		public static int MaxCapacity
+		{
+			get {
+				int cap = extraCapacity + baseCapacity;
+
+				// Protect against overflow
+				if (cap < 0)
+					return int.MaxValue;
+				else
+					return cap;
+			}
+		}
 
 		public static int RemainingCapacity => MaxCapacity - GetVaultLoad();
 
