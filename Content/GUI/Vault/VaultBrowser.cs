@@ -208,7 +208,7 @@ namespace DragonVault.Content.GUI.Vault
 				Main.LocalPlayer.mouseInterface = true;
 				Main.HoverItem = entry.item.Clone();
 				Main.HoverItem.stack = entry.simStack;
-				Main.hoverItemName = "a";
+				Main.hoverItemName = "Unknown";
 			}
 		}
 
