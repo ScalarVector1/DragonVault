@@ -81,8 +81,8 @@ namespace DragonVault.Content.GUI.Vault
 		public Recipe activeRecipe;
 
 		public UIList requirements;
-
 		public TextField quantityField;
+		public UIText max;
 
 		public static int amountToMake = 1;
 
@@ -129,6 +129,14 @@ namespace DragonVault.Content.GUI.Vault
 			ex.Left.Set(124, 0);
 			ex.Top.Set(516, 0);
 			Append(ex);
+
+			max = new("^");
+			max.Left.Set(174, 0);
+			max.Top.Set(516, 0);
+			max.Width.Set(26, 0);
+			max.Height.Set(26, 0);
+			max.OnLeftClick += (a, b) => Max();
+			Append(max);
 
 			CraftButton craftButton = new();
 			craftButton.Left.Set(20, 0);
@@ -200,6 +208,9 @@ namespace DragonVault.Content.GUI.Vault
 		/// <returns></returns>
 		public int MaxCanCraft()
 		{
+			if (activeRecipe is null)
+				return 1;
+
 			int max = 9999;
 
 			activeRecipe.requiredItem.ForEach(item =>
@@ -209,7 +220,7 @@ namespace DragonVault.Content.GUI.Vault
 				int group = activeRecipe.acceptedGroups.FirstOrDefault(n => RecipeGroup.recipeGroups[n].ValidItems.Contains(item.type));
 
 				if (group != 0)
-					proposed = RecipeUtil.GetOwnedQuantity(group) / item.stack;
+					proposed = RecipeUtil.GetOwnedQuantity(RecipeGroup.recipeGroups[group]) / item.stack;
 				else
 					proposed = RecipeUtil.GetOwnedQuantity(item.type) / item.stack;
 
@@ -224,8 +235,6 @@ namespace DragonVault.Content.GUI.Vault
 		{
 			if (quantityField.updated)
 			{
-				var max = MaxCanCraft();
-
 				if (int.TryParse(quantityField.currentValue, out int amount))
 					amountToMake = amount;
 				else
@@ -234,8 +243,8 @@ namespace DragonVault.Content.GUI.Vault
 				if (amountToMake < 1)
 					amountToMake = 1;
 
-				if (amountToMake > max)
-					amountToMake = max;
+				if (amountToMake > 9999)
+					amountToMake = 9999;
 			}
 
 			if (!quantityField.typing)
@@ -247,27 +256,45 @@ namespace DragonVault.Content.GUI.Vault
 		/// </summary>
 		public void Craft()
 		{
-			for (int k = 0; k < amountToMake; k++)
+			if (Main.availableRecipe.Contains(Array.IndexOf(Main.recipe, activeRecipe)) && MaxCanCraft() >= amountToMake)
 			{
-				if (Main.availableRecipe.Contains(Array.IndexOf(Main.recipe, activeRecipe)))
+				int totalMade = 0;
+
+				for (int k = 0; k < amountToMake; k++)
 				{
+					if (Main.availableRecipe.Contains(Array.IndexOf(Main.recipe, activeRecipe)))
+					{
+						Item crafted = activeRecipe.createItem.Clone();
+						crafted.Prefix(-1);
+						activeRecipe.Create();
+						RecipeLoader.OnCraft(crafted, activeRecipe, Main.mouseItem);
+
+						totalMade += activeRecipe.createItem.stack;
+					}
+					else
+					{
+						Main.NewText("Could not fully craft the requested amount!", Color.Red);
+						break;
+					}
+				}
+
+				while (totalMade > 0)
+				{
+					int thisStack = totalMade > activeRecipe.createItem.maxStack ? activeRecipe.createItem.maxStack : totalMade;
+
 					Item crafted = activeRecipe.createItem.Clone();
 					crafted.Prefix(-1);
-					activeRecipe.Create();
-					RecipeLoader.OnCraft(crafted, activeRecipe, Main.mouseItem);
 
-					Main.LocalPlayer.QuickSpawnItemDirect(null, crafted);
-
-					PopupText.NewText(PopupTextContext.ItemCraft, crafted, activeRecipe.createItem.stack);
-
-					//SoundEngine.PlaySound(SoundID.Item);
-				}
-				else
-				{
-					Main.NewText("Could not fully craft the requested amount!", Color.Red);
-					break;
+					Main.LocalPlayer.QuickSpawnItemDirect(null, crafted, thisStack);
+					totalMade -= thisStack;
 				}
 			}
+		}
+
+		public void Max()
+		{
+			amountToMake = Math.Max(1, MaxCanCraft());
+			quantityField.currentValue = $"{amountToMake}";
 		}
 	}
 
@@ -281,7 +308,7 @@ namespace DragonVault.Content.GUI.Vault
 
 		public override void Draw(SpriteBatch spriteBatch)
 		{
-			bool craftable = Main.availableRecipe.Contains(Array.IndexOf(Main.recipe, RecipeBrowser.display.activeRecipe));
+			bool craftable = Main.availableRecipe.Contains(Array.IndexOf(Main.recipe, RecipeBrowser.display.activeRecipe)) && RecipeBrowser.display.MaxCanCraft() >= RecipeDisplay.amountToMake;
 
 			GUIHelper.DrawBox(spriteBatch, GetDimensions().ToRectangle(), ThemeHandler.ButtonColor);
 			Utils.DrawBorderString(spriteBatch, "Craft", GetDimensions().Center(), Color.White, 1f, 0.5f, 0.4f);
@@ -444,7 +471,7 @@ namespace DragonVault.Content.GUI.Vault
 			if (!isTile)
 			{
 				int owned = GetOwnedQuantity();
-				Utils.DrawBorderString(spriteBatch, $"{GetOwnedQuantity()}/{QuantityWanted}", iconBox.TopLeft() + new Vector2(0, 36), textColor, 0.75f, 0, 0.5f);
+				Utils.DrawBorderString(spriteBatch, $"{GetOwnedQuantity()}/{QuantityWanted}", iconBox.TopLeft() + new Vector2(0, 36), textColor, 0.7f, 0, 0.5f);
 			}
 
 			if (IsMouseHovering)
