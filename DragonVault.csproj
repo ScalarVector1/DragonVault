@@ -3,14 +3,15 @@
   <Import Project="..\tModLoader.targets" />
   <PropertyGroup>
     <AssemblyName>DragonVault</AssemblyName>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="AssGenConfig.txt" />
     <None Remove="Localization\Tools\en-US_Mods.DragonVault.Tools.hjson" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="tModLoader.CodeAssist" Version="0.1.*" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AssGen" OutputItemType="Analyzer" ReferenceOutputAssembly="false" Version="1.0.1" />
+	</ItemGroup>
 </Project>

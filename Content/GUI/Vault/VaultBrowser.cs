@@ -30,8 +30,6 @@ namespace DragonVault.Content.GUI.Vault
 
 		public override string IconTexture => "ItemSpawner";
 
-		public override string HelpLink => "https://github.com/ScalarVector1/DragonVault/wiki/Item-spawner";
-
 		public override Vector2 DefaultPosition => new(0.6f, 0.4f);
 
 		public override void PostInitialize()
@@ -75,7 +73,7 @@ namespace DragonVault.Content.GUI.Vault
 		public override void SetupFilters(FilterPanel filters)
 		{
 			filters.AddSeperator("Tools.ItemSpawner.FilterCategories.Mod");
-			filters.AddFilter(new Filter("DragonVault/Assets/Filters/Vanilla", "Tools.ItemSpawner.Filters.Vanilla", n => !(n is ItemButton && (n as ItemButton).entry.item.ModItem is null)));
+			filters.AddFilter(new Filter(Assets.Filters.Vanilla, "Tools.ItemSpawner.Filters.Vanilla", n => !(n is ItemButton && (n as ItemButton).entry.item.ModItem is null)) { isModFilter = true });
 
 			foreach (Mod mod in ModLoader.Mods.Where(n => n.GetContent<ModItem>().Count() > 0))
 			{
@@ -83,19 +81,36 @@ namespace DragonVault.Content.GUI.Vault
 			}
 
 			filters.AddSeperator("Tools.ItemSpawner.FilterCategories.Damage");
-			filters.AddFilter(new Filter("DragonVault/Assets/Filters/Unknown", "Tools.ItemSpawner.Filters.AnyDamage", n => !(n is ItemButton && (n as ItemButton).entry.item.damage > 0)));
-			filters.AddFilter(new DamageClassFilter(DamageClass.Melee, "DragonVault/Assets/Filters/Melee"));
-			filters.AddFilter(new DamageClassFilter(DamageClass.Ranged, "DragonVault/Assets/Filters/Ranged"));
-			filters.AddFilter(new DamageClassFilter(DamageClass.Magic, "DragonVault/Assets/Filters/Magic"));
-			filters.AddFilter(new DamageClassFilter(DamageClass.Summon, "DragonVault/Assets/Filters/Summon"));
-			filters.AddFilter(new DamageClassFilter(DamageClass.Throwing, "DragonVault/Assets/Filters/Throwing"));
+			filters.AddFilter(new Filter(Assets.Filters.Unknown, "Tools.ItemSpawner.Filters.AnyDamage", n => !(n is ItemButton && (n as ItemButton).entry.item.damage > 0)));
+			filters.AddFilter(new DamageClassFilter(DamageClass.Melee, Assets.Filters.Melee));
+			filters.AddFilter(new DamageClassFilter(DamageClass.Ranged, Assets.Filters.Ranged));
+			filters.AddFilter(new Filter(Assets.Filters.Ammo, "Tools.ItemSpawner.Filters.Ammo", n => n is ItemButton ib && ib.entry.item.ammo == AmmoID.None));
+			filters.AddFilter(new DamageClassFilter(DamageClass.Magic, Assets.Filters.Magic));
+			filters.AddFilter(new DamageClassFilter(DamageClass.Summon, Assets.Filters.Summon));
+			filters.AddFilter(new DamageClassFilter(DamageClass.Throwing, Assets.Filters.Throwing));
+
+			filters.AddSeperator("Tools.ItemSpawner.FilterCategories.Equipment");
+			filters.AddFilter(new Filter(Assets.Filters.Defense, "Tools.ItemSpawner.Filters.Armor", n => !(n is ItemButton && (n as ItemButton).entry.item.defense > 0)));
+			filters.AddFilter(new Filter(Assets.Filters.Accessory, "Tools.ItemSpawner.Filters.Accessory", n => !(n is ItemButton && (n as ItemButton).entry.item.accessory)));
+			filters.AddFilter(new Filter(Assets.Filters.Wings, "Tools.ItemSpawner.Filters.Wings", n => n is ItemButton ib && ib.entry.item.wingSlot == -1));
+			filters.AddFilter(new Filter(Assets.Filters.Hooks, "Tools.ItemSpawner.Filters.Hooks", n => n is ItemButton ib && !Main.projHook[ib.entry.item.shoot]));
+			filters.AddFilter(new Filter(Assets.Filters.Mounts, "Tools.ItemSpawner.Filters.Mounts", n => n is ItemButton ib && ib.entry.item.mountType == -1));
+			filters.AddFilter(new Filter(Assets.Filters.Vanity, "Tools.ItemSpawner.Filters.Vanity", n => n is ItemButton ib && !ib.entry.item.vanity));
+			filters.AddFilter(new Filter(Assets.Filters.Pets, "Tools.ItemSpawner.Filters.Pets", n => n is ItemButton ib && !(Main.vanityPet[ib.entry.item.buffType] || Main.lightPet[ib.entry.item.buffType])));
+
+			filters.AddSeperator("Tools.ItemSpawner.FilterCategories.Utility");
+			filters.AddFilter(new Filter(Assets.Filters.Pickaxe, "Tools.ItemSpawner.Filters.Pickaxe", n => n is ItemButton ib && ib.entry.item.pick == 0));
+			filters.AddFilter(new Filter(Assets.Filters.Axe, "Tools.ItemSpawner.Filters.Axe", n => n is ItemButton ib && ib.entry.item.axe == 0));
+			filters.AddFilter(new Filter(Assets.Filters.Hammer, "Tools.ItemSpawner.Filters.Hammer", n => n is ItemButton ib && ib.entry.item.hammer == 0));
+			filters.AddFilter(new Filter(Assets.Filters.Placeable, "Tools.ItemSpawner.Filters.Placeable", n => !(n is ItemButton && (n as ItemButton).entry.item.createTile >= TileID.Dirt || (n as ItemButton).entry.item.createWall >= 0)));
+			filters.AddFilter(new Filter(Assets.Filters.Consumables, "Tools.ItemSpawner.Filters.Consumables", n => n is ItemButton ib && (!ib.entry.item.consumable || ib.entry.item.createTile >= TileID.Dirt || ib.entry.item.createWall >= 0)));
 
 			filters.AddSeperator("Tools.ItemSpawner.FilterCategories.Misc");
-
-			filters.AddFilter(new Filter("DragonVault/Assets/Filters/Accessory", "Tools.ItemSpawner.Filters.Accessory", n => !(n is ItemButton && (n as ItemButton).entry.item.accessory)));
-			filters.AddFilter(new Filter("DragonVault/Assets/Filters/Defense", "Tools.ItemSpawner.Filters.Armor", n => !(n is ItemButton && (n as ItemButton).entry.item.defense > 0)));
-			filters.AddFilter(new Filter("DragonVault/Assets/Filters/Placeable", "Tools.ItemSpawner.Filters.Placeable", n => !(n is ItemButton && (n as ItemButton).entry.item.createTile >= TileID.Dirt || (n as ItemButton).entry.item.createWall >= 0)));
-			filters.AddFilter(new Filter("DragonVault/Assets/Filters/Unknown", "Tools.ItemSpawner.Filters.Deprecated", n => n is ItemButton ib && !ItemID.Sets.Deprecated[ib.entry.item.type]));
+			filters.AddFilter(new Filter(Assets.Filters.MakeNPC, "Tools.ItemSpawner.Filters.MakeNPC", n => n is ItemButton ib && ib.entry.item.makeNPC == 0));
+			filters.AddFilter(new Filter(Assets.Filters.Expert, "Tools.ItemSpawner.Filters.Expert", n => n is ItemButton ib && !ib.entry.item.expert));
+			filters.AddFilter(new Filter(Assets.Filters.Master, "Tools.ItemSpawner.Filters.Master", n => n is ItemButton ib && !ib.entry.item.master));
+			filters.AddFilter(new Filter(Assets.Filters.Material, "Tools.ItemSpawner.Filters.Material", n => n is ItemButton ib && !ItemID.Sets.IsAMaterial[ib.entry.item.type]));
+			filters.AddFilter(new Filter(Assets.Filters.Unknown, "Tools.ItemSpawner.Filters.Deprecated", n => n is ItemButton ib && !ItemID.Sets.Deprecated[ib.entry.item.type]));
 		}
 
 		public override void AdjustPositions(Vector2 newPos)

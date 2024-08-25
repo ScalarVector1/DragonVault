@@ -1,5 +1,7 @@
 ﻿using DragonVault.Content.GUI;
 using DragonVault.Content.GUI.Vault;
+using DragonVault.Helpers;
+using ReLogic.Content;
 
 namespace DragonVault.Content.Filters.ItemFilters
 {
@@ -7,14 +9,19 @@ namespace DragonVault.Content.Filters.ItemFilters
 	{
 		public DamageClass damageClass;
 
-		public DamageClassFilter(DamageClass damageClass, string texture) : base(texture, "", n => FilterByDamageClass(n, damageClass))
+		public DamageClassFilter(DamageClass damageClass, Asset<Texture2D> texture) : base(texture, "", n => FilterByDamageClass(n, damageClass))
 		{
 			this.damageClass = damageClass;
 		}
 
 		public override string Name => damageClass.DisplayName.Value.Trim();
 
-		public override string Description => "";
+		public override string Description => GetText("Filters.DamageClass.Description", damageClass.DisplayName.Value.Trim());
+
+		public static string GetText(string key, params object[] args)
+		{
+			return LocalizationHelper.GetText($"Tools.ItemSpawner.{key}", args);
+		}
 
 		public static bool FilterByDamageClass(BrowserButton button, DamageClass damageClass)
 		{

@@ -33,7 +33,7 @@ namespace DragonVault.Content.Tiles
 			// Temporary
 			RecipeBrowser rb = UILoader.GetUIState<RecipeBrowser>();
 			rb.visible = true;
-
+			rb.Refresh();
 			if (!rb.initialized)
 			{
 				rb.Refresh();

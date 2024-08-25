@@ -19,7 +19,7 @@ namespace DragonVault.Content.GUI
 	internal abstract class Browser : DraggableUIState
 	{
 		public UIGrid options;
-		private FixedUIScrollbar scrollBar;
+		private StyledScrollbar scrollBar;
 		private ToggleButton listButton;
 		private ToggleButton filterButton;
 		public FilterPanel filters;
@@ -56,7 +56,7 @@ namespace DragonVault.Content.GUI
 		/// </summary>
 		public void SortGrid()
 		{
-			options.UpdateOrder();
+			//options.UpdateOrder();
 		}
 
 		/// <summary>
@@ -115,13 +115,11 @@ namespace DragonVault.Content.GUI
 			sizeSlider = new(this);
 			Append(sizeSlider);
 
-			listButton = new("DragonVault/Assets/GUI/Play", () => listMode, LocalizationHelper.GetGUIText("Browser.ListView"));
+			listButton = new("DragonLens/Assets/GUI/Play", () => listMode, LocalizationHelper.GetGUIText("Browser.ListView"));
 			listButton.OnLeftClick += (n, k) => listMode = !listMode;
 			Append(listButton);
 
-			FilterEvent = null;
-
-			filterButton = new("DragonVault/Assets/GUI/Filter", () => filtersVisible, LocalizationHelper.GetGUIText("Browser.Filters"));
+			filterButton = new("DragonLens/Assets/GUI/Filter", () => filtersVisible, LocalizationHelper.GetGUIText("Browser.Filters"));
 			filterButton.OnLeftClick += (n, k) =>
 			{
 				filtersVisible = !filtersVisible;
@@ -182,7 +180,7 @@ namespace DragonVault.Content.GUI
 
 			GUIHelper.DrawBox(spriteBatch, target, ThemeHandler.BackgroundColor);
 
-			Texture2D back = ModContent.Request<Texture2D>("DragonVault/Assets/GUI/Gradient").Value;
+			Texture2D back = Assets.GUI.Gradient.Value;
 			var backTarget = new Rectangle((int)basePos.X + 8, (int)basePos.Y + 8, 400, 48);
 			spriteBatch.Draw(back, backTarget, Color.Black * 0.5f);
 
@@ -191,7 +189,7 @@ namespace DragonVault.Content.GUI
 			gridBackTarget.Inflate(4, 4);
 			spriteBatch.Draw(gridBack, gridBackTarget, Color.Black * 0.25f);
 
-			Texture2D icon = ModContent.Request<Texture2D>("DragonVault/Assets/Themes/IconProviders/DefaultIcons/ItemSpawner").Value;
+			Texture2D icon = Assets.VaultItem.Value;
 			spriteBatch.Draw(icon, basePos + Vector2.One * 16, Color.White);
 
 			Utils.DrawBorderStringBig(spriteBatch, Name, basePos + new Vector2(icon.Width + 24, 16), Color.White, 0.6f);
@@ -390,7 +388,7 @@ namespace DragonVault.Content.GUI
 			var dims = GetDimensions().ToRectangle();
 			GUIHelper.DrawBox(spriteBatch, dims, ThemeHandler.ButtonColor);
 
-			Texture2D tex = ModContent.Request<Texture2D>("DragonVault/Assets/GUI/AlphaScale").Value;
+			Texture2D tex = Assets.GUI.AlphaScale.Value;
 			dims.Inflate(-4, -4);
 			spriteBatch.Draw(tex, dims, Color.White);
 
