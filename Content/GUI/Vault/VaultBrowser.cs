@@ -458,6 +458,7 @@ namespace DragonVault.Content.GUI.Vault
 
 				rb.basePos = UILoader.GetUIState<VaultBrowser>().basePos;
 				rb.AdjustPositions(UILoader.GetUIState<VaultBrowser>().basePos);
+				rb.fromTile = UILoader.GetUIState<VaultBrowser>().fromTile;
 
 				UILoader.GetUIState<VaultBrowser>().visible = false;
 			}

@@ -17,6 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ID;
 using Terraria.Map;
@@ -32,6 +33,8 @@ namespace DragonVault.Content.GUI.Vault
 		public static RecipeDisplay display;
 
 		public VaultSwapButton vault;
+
+		public bool fromTile;
 
 		public override string Name => "Crafting";
 
@@ -118,6 +121,38 @@ namespace DragonVault.Content.GUI.Vault
 			filters.AddFilter(new Filter(Assets.Filters.Master, "Tools.ItemSpawner.Filters.Master", n => n is RecipeButton ib && !ib.result.master));
 			filters.AddFilter(new Filter(Assets.Filters.Material, "Tools.ItemSpawner.Filters.Material", n => n is RecipeButton ib && !ItemID.Sets.IsAMaterial[ib.result.type]));
 			filters.AddFilter(new Filter(Assets.Filters.Unknown, "Tools.ItemSpawner.Filters.Deprecated", n => n is RecipeButton ib && !ItemID.Sets.Deprecated[ib.result.type]));
+		}
+
+		public override void DraggableUpdate(GameTime gameTime)
+		{
+			Main.playerInventory = true;
+
+			if (Main.LocalPlayer.controlInv)
+			{
+				visible = false;
+				Main.playerInventory = false;
+				return;
+			}
+
+			bool nearVault = false;
+			var tilePos = (Main.LocalPlayer.Center / 16).ToPoint16();
+
+			for (int x = -10; x < 10; x++)
+			{
+				for (int y = -10; y < 10; y++)
+				{
+					Point16 off = new(x, y);
+					Point16 target = tilePos + off;
+
+					Tile tile = Framing.GetTileSafely(target);
+
+					if (tile.HasTile && tile.TileType == ModContent.TileType<Tiles.Vault>())
+						nearVault = true;
+				}
+			}
+
+			if (fromTile && !nearVault)
+				visible = false;
 		}
 	}
 
@@ -412,7 +447,14 @@ namespace DragonVault.Content.GUI.Vault
 
 		public override void SafeUpdate(GameTime gameTime)
 		{
-			craftable = Main.availableRecipe.Contains(index);
+			craftable = false;
+
+			for(int k = 0; k < Main.numAvailableRecipes; k++)
+			{
+				if (Main.availableRecipe[k] == index)
+					craftable = true;
+			}
+
 			base.SafeUpdate(gameTime);
 		}
 
@@ -607,6 +649,7 @@ namespace DragonVault.Content.GUI.Vault
 
 			rb.basePos = UILoader.GetUIState<RecipeBrowser>().basePos;
 			rb.AdjustPositions(UILoader.GetUIState<RecipeBrowser>().basePos);
+			rb.fromTile = UILoader.GetUIState<RecipeBrowser>().fromTile;
 
 			UILoader.GetUIState<RecipeBrowser>().visible = false;
 		}

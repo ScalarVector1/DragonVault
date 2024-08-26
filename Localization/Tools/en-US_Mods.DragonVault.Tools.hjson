@@ -6,6 +6,8 @@ ItemSpawner: {
 		Crafting: Crafting filters
 		Mod: Mod filters
 		Damage: Damage filters
+		Equipment: Equipment filters
+		Utility: Utility filters
 		Misc: Misc filters
 	}
 
