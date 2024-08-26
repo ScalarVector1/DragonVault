@@ -26,6 +26,14 @@ namespace DragonVault.Content.Filters.ItemFilters
 					return false;
 			}
 
+			if (button is RecipeButton)
+			{
+				var ib = button as RecipeButton;
+
+				if (ib.result.ModItem != null && ib.result.ModItem.Mod == mod)
+					return false;
+			}
+
 			return true;
 		}
 

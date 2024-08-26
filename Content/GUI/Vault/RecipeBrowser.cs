@@ -1,7 +1,9 @@
 ﻿using DragonVault.Content.Filters;
 using DragonVault.Content.Filters.ItemFilters;
 using DragonVault.Content.GUI.FieldEditors;
+using DragonVault.Content.Items.Dragonstones;
 using DragonVault.Core.Loaders.UILoading;
+using DragonVault.Core.Systems;
 using DragonVault.Core.Systems.ThemeSystem;
 using DragonVault.Helpers;
 using Microsoft.Win32;
@@ -29,6 +31,8 @@ namespace DragonVault.Content.GUI.Vault
 	{
 		public static RecipeDisplay display;
 
+		public VaultSwapButton vault;
+
 		public override string Name => "Crafting";
 
 		public override string IconTexture => "ItemSpawner";
@@ -42,12 +46,18 @@ namespace DragonVault.Content.GUI.Vault
 			display = new();
 			display.OnInitialize();
 			Append(display);
+
+			vault = new();
+			Append(vault);
 		}
 
 		public override void AdjustPositions(Vector2 newPos)
 		{
 			display.Left.Set(newPos.X - 240, 0);
 			display.Top.Set(newPos.Y, 0);
+
+			vault?.Left.Set(newPos.X, 0);
+			vault?.Top.Set(newPos.Y - 46, 0);
 
 			base.AdjustPositions(newPos);
 		}
@@ -66,13 +76,48 @@ namespace DragonVault.Content.GUI.Vault
 
 		public override void SetupFilters(FilterPanel filters)
 		{
+			filters.AddSeperator("Tools.ItemSpawner.FilterCategories.Crafting");
+			filters.AddFilter(new Filter(Assets.Filters.Hammer, "Tools.ItemSpawner.Filters.Craftable", n => !(n is RecipeButton && (n as RecipeButton).craftable)));
+
 			filters.AddSeperator("Tools.ItemSpawner.FilterCategories.Mod");
-			filters.AddFilter(new Filter(Assets.Filters.Vanilla, "Tools.ItemSpawner.Filters.Vanilla", n => !(n is RecipeButton && (n as RecipeButton).result.ModItem is null)));
+			filters.AddFilter(new Filter(Assets.Filters.Vanilla, "Tools.ItemSpawner.Filters.Vanilla", n => !(n is RecipeButton && (n as RecipeButton).result.ModItem is null)) { isModFilter = true });
 
 			foreach (Mod mod in ModLoader.Mods.Where(n => n.GetContent<ModItem>().Count() > 0))
 			{
-
+				filters.AddFilter(new ItemModFilter(mod));
 			}
+
+			filters.AddSeperator("Tools.ItemSpawner.FilterCategories.Damage");
+			filters.AddFilter(new Filter(Assets.Filters.Unknown, "Tools.ItemSpawner.Filters.AnyDamage", n => !(n is RecipeButton && (n as RecipeButton).result.damage > 0)));
+			filters.AddFilter(new DamageClassFilter(DamageClass.Melee, Assets.Filters.Melee));
+			filters.AddFilter(new DamageClassFilter(DamageClass.Ranged, Assets.Filters.Ranged));
+			filters.AddFilter(new Filter(Assets.Filters.Ammo, "Tools.ItemSpawner.Filters.Ammo", n => n is RecipeButton ib && ib.result.ammo == AmmoID.None));
+			filters.AddFilter(new DamageClassFilter(DamageClass.Magic, Assets.Filters.Magic));
+			filters.AddFilter(new DamageClassFilter(DamageClass.Summon, Assets.Filters.Summon));
+			filters.AddFilter(new DamageClassFilter(DamageClass.Throwing, Assets.Filters.Throwing));
+
+			filters.AddSeperator("Tools.ItemSpawner.FilterCategories.Equipment");
+			filters.AddFilter(new Filter(Assets.Filters.Defense, "Tools.ItemSpawner.Filters.Armor", n => !(n is RecipeButton && (n as RecipeButton).result.defense > 0)));
+			filters.AddFilter(new Filter(Assets.Filters.Accessory, "Tools.ItemSpawner.Filters.Accessory", n => !(n is RecipeButton && (n as RecipeButton).result.accessory)));
+			filters.AddFilter(new Filter(Assets.Filters.Wings, "Tools.ItemSpawner.Filters.Wings", n => n is RecipeButton ib && ib.result.wingSlot == -1));
+			filters.AddFilter(new Filter(Assets.Filters.Hooks, "Tools.ItemSpawner.Filters.Hooks", n => n is RecipeButton ib && !Main.projHook[ib.result.shoot]));
+			filters.AddFilter(new Filter(Assets.Filters.Mounts, "Tools.ItemSpawner.Filters.Mounts", n => n is RecipeButton ib && ib.result.mountType == -1));
+			filters.AddFilter(new Filter(Assets.Filters.Vanity, "Tools.ItemSpawner.Filters.Vanity", n => n is RecipeButton ib && !ib.result.vanity));
+			filters.AddFilter(new Filter(Assets.Filters.Pets, "Tools.ItemSpawner.Filters.Pets", n => n is RecipeButton ib && !(Main.vanityPet[ib.result.buffType] || Main.lightPet[ib.result.buffType])));
+
+			filters.AddSeperator("Tools.ItemSpawner.FilterCategories.Utility");
+			filters.AddFilter(new Filter(Assets.Filters.Pickaxe, "Tools.ItemSpawner.Filters.Pickaxe", n => n is RecipeButton ib && ib.result.pick == 0));
+			filters.AddFilter(new Filter(Assets.Filters.Axe, "Tools.ItemSpawner.Filters.Axe", n => n is RecipeButton ib && ib.result.axe == 0));
+			filters.AddFilter(new Filter(Assets.Filters.Hammer, "Tools.ItemSpawner.Filters.Hammer", n => n is RecipeButton ib && ib.result.hammer == 0));
+			filters.AddFilter(new Filter(Assets.Filters.Placeable, "Tools.ItemSpawner.Filters.Placeable", n => !(n is RecipeButton && (n as RecipeButton).result.createTile >= TileID.Dirt || (n as RecipeButton).result.createWall >= 0)));
+			filters.AddFilter(new Filter(Assets.Filters.Consumables, "Tools.ItemSpawner.Filters.Consumables", n => n is RecipeButton ib && (!ib.result.consumable || ib.result.createTile >= TileID.Dirt || ib.result.createWall >= 0)));
+
+			filters.AddSeperator("Tools.ItemSpawner.FilterCategories.Misc");
+			filters.AddFilter(new Filter(Assets.Filters.MakeNPC, "Tools.ItemSpawner.Filters.MakeNPC", n => n is RecipeButton ib && ib.result.makeNPC == 0));
+			filters.AddFilter(new Filter(Assets.Filters.Expert, "Tools.ItemSpawner.Filters.Expert", n => n is RecipeButton ib && !ib.result.expert));
+			filters.AddFilter(new Filter(Assets.Filters.Master, "Tools.ItemSpawner.Filters.Master", n => n is RecipeButton ib && !ib.result.master));
+			filters.AddFilter(new Filter(Assets.Filters.Material, "Tools.ItemSpawner.Filters.Material", n => n is RecipeButton ib && !ItemID.Sets.IsAMaterial[ib.result.type]));
+			filters.AddFilter(new Filter(Assets.Filters.Unknown, "Tools.ItemSpawner.Filters.Deprecated", n => n is RecipeButton ib && !ItemID.Sets.Deprecated[ib.result.type]));
 		}
 	}
 
@@ -135,6 +180,7 @@ namespace DragonVault.Content.GUI.Vault
 			max.Top.Set(516, 0);
 			max.Width.Set(26, 0);
 			max.Height.Set(26, 0);
+			max.TextOriginY = 0.5f;
 			max.OnLeftClick += (a, b) => Max();
 			Append(max);
 
@@ -185,6 +231,9 @@ namespace DragonVault.Content.GUI.Vault
 
 		public override void Draw(SpriteBatch spriteBatch)
 		{
+			if (activeRecipe is null)
+				return;
+
 			GUIHelper.DrawBox(spriteBatch, GetDimensions().ToRectangle(), ThemeHandler.BackgroundColor);
 
 			Vector2 pos = GetDimensions().Position();
@@ -192,11 +241,16 @@ namespace DragonVault.Content.GUI.Vault
 			GUIHelper.DrawBox(spriteBatch, new Rectangle((int)pos.X + 10, (int)pos.Y + 10, 46, 46), ThemeHandler.ButtonColor);
 			Utils.DrawBorderString(spriteBatch, shortName ?? "", pos + new Vector2(62, 36), Color.White, 0.8f, 0, 0.5f);
 
+			Main.inventoryScale = 38f / 36f;
+			ItemSlot.Draw(spriteBatch, ref activeRecipe.createItem, 21, GetDimensions().Position() + Vector2.One * 4);
 
-			if (activeRecipe != null)
+			if (IsMouseHovering)
+				Main.LocalPlayer.mouseInterface = true;
+
+			if (max.IsMouseHovering)
 			{
-				Main.inventoryScale = 38f / 36f;
-				ItemSlot.Draw(spriteBatch, ref activeRecipe.createItem, 21, GetDimensions().Position() + Vector2.One * 4);
+				Tooltip.SetName("Set to max");
+				Tooltip.SetTooltip("");
 			}
 
 			base.Draw(spriteBatch);
@@ -324,6 +378,9 @@ namespace DragonVault.Content.GUI.Vault
 
 		public Item result;
 
+		public int index;
+		public bool craftable;
+
 		public override string Identifier => result.Name;
 
 		public RecipeButton(Browser parent, Recipe recipe) : base(parent)
@@ -331,6 +388,7 @@ namespace DragonVault.Content.GUI.Vault
 			this.recipe = recipe;
 
 			result = recipe.createItem.Clone();
+			index = Array.IndexOf(Main.recipe, recipe);
 		}
 
 		public override void SafeDraw(SpriteBatch spriteBatch, Rectangle iconBox)
@@ -338,7 +396,7 @@ namespace DragonVault.Content.GUI.Vault
 			Main.inventoryScale = 36 / 52f * iconBox.Width / 36f;
 			ItemSlot.Draw(spriteBatch, ref result, 21, GetDimensions().Position());
 
-			if (!Main.availableRecipe.Contains(Array.IndexOf(Main.recipe, recipe)))
+			if (!craftable)
 				GUIHelper.DrawBox(spriteBatch, iconBox, Color.Black * 0.6f);
 
 			if (RecipeBrowser.display.activeRecipe == recipe)
@@ -350,6 +408,12 @@ namespace DragonVault.Content.GUI.Vault
 				Main.HoverItem = result.Clone();
 				Main.hoverItemName = "Unknown";
 			}
+		}
+
+		public override void SafeUpdate(GameTime gameTime)
+		{
+			craftable = Main.availableRecipe.Contains(index);
+			base.SafeUpdate(gameTime);
 		}
 
 		public override void SafeClick(UIMouseEvent evt)
@@ -503,6 +567,48 @@ namespace DragonVault.Content.GUI.Vault
 					}
 				}
 			}
+		}
+	}
+
+	internal class VaultSwapButton : UIElement
+	{
+		public VaultSwapButton()
+		{
+			Width.Set(160, 0);
+			Height.Set(40, 0);
+		}
+
+		public override void Draw(SpriteBatch spriteBatch)
+		{
+			var drawBox = GetDimensions().ToRectangle();
+
+			GUIHelper.DrawBox(spriteBatch, drawBox, ThemeHandler.ButtonColor);
+
+			Utils.DrawBorderString(spriteBatch, "Vault", drawBox.Center.ToVector2(), Color.White, 1, 0.5f, 0.4f);
+
+			if (IsMouseHovering)
+			{
+				Main.LocalPlayer.mouseInterface = true;
+				Tooltip.SetName("Vault");
+				Tooltip.SetTooltip("View vault");
+			}
+		}
+
+		public override void LeftClick(UIMouseEvent evt)
+		{
+			VaultBrowser rb = UILoader.GetUIState<VaultBrowser>();
+			rb.visible = true;
+
+			if (!rb.initialized)
+			{
+				rb.Refresh();
+				rb.initialized = true;
+			}
+
+			rb.basePos = UILoader.GetUIState<RecipeBrowser>().basePos;
+			rb.AdjustPositions(UILoader.GetUIState<RecipeBrowser>().basePos);
+
+			UILoader.GetUIState<RecipeBrowser>().visible = false;
 		}
 	}
 

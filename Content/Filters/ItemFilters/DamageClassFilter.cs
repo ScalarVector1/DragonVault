@@ -33,6 +33,14 @@ namespace DragonVault.Content.Filters.ItemFilters
 					return false;
 			}
 
+			if (button is RecipeButton)
+			{
+				var ib = button as RecipeButton;
+
+				if (ib.result.damage > 0 && ib.result.DamageType.CountsAsClass(damageClass))
+					return false;
+			}
+
 			return true;
 		}
 	}

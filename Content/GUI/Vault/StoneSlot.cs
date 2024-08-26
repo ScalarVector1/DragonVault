@@ -63,6 +63,7 @@ namespace DragonVault.Content.GUI.Vault
 
 			if (IsMouseHovering)
 			{
+				Main.LocalPlayer.mouseInterface = true;
 				Tooltip.SetName(Dragonstone.samples[id].Name);
 				Tooltip.SetTooltip(Dragonstone.samples[id].ModItem.Tooltip.Value.Replace("\n", "\n------\n") + "\n------\n" + (Active ? "Active" : "Slot the item here to activate this power for " + Main.worldName));
 			}

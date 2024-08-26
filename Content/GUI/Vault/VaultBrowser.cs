@@ -23,6 +23,7 @@ namespace DragonVault.Content.GUI.Vault
 
 		public StorageButton button;
 		public DepositButton deposit;
+		public CraftSwapButton craft;
 
 		public StoneSlot[] slots;
 
@@ -39,6 +40,9 @@ namespace DragonVault.Content.GUI.Vault
 
 			deposit = new();
 			Append(deposit);
+
+			craft = new();
+			Append(craft);
 
 			slots = new StoneSlot[]
 			{
@@ -122,6 +126,9 @@ namespace DragonVault.Content.GUI.Vault
 
 			deposit.Left.Set(newPos.X - 180, 0);
 			deposit.Top.Set(newPos.Y + 85, 0);
+
+			craft?.Left.Set(newPos.X, 0);
+			craft?.Top.Set(newPos.Y - 46, 0);
 
 			int y = 0;
 
@@ -346,6 +353,8 @@ namespace DragonVault.Content.GUI.Vault
 			Utils.DrawBorderString(spriteBatch, $"Increase storage", drawBox.Center.ToVector2() + new Vector2(0, -24), Color.White, 1, 0.5f, 0f);
 			Utils.DrawBorderString(spriteBatch, $"Cost: {StorageSystem.baseCapacity / 1000} gold", drawBox.Center.ToVector2() + new Vector2(0, 0), Color.Gold, 1, 0.5f, 0f);
 
+			if (IsMouseHovering)
+				Main.LocalPlayer.mouseInterface = true;
 		}
 
 		public override void LeftClick(UIMouseEvent evt)
@@ -383,6 +392,7 @@ namespace DragonVault.Content.GUI.Vault
 
 			if (IsMouseHovering)
 			{
+				Main.LocalPlayer.mouseInterface = true;
 				Tooltip.SetName("Deposit all");
 				Tooltip.SetTooltip("Deposit all non-favorited items into the vault");
 			}
@@ -405,6 +415,55 @@ namespace DragonVault.Content.GUI.Vault
 					if (added && newEntry != null)
 						VaultBrowser.Rebuild();
 				}
+			}
+		}
+	}
+
+	internal class CraftSwapButton : UIElement
+	{
+		public CraftSwapButton()
+		{
+			Width.Set(160, 0);
+			Height.Set(40, 0);
+		}
+
+		public override void Draw(SpriteBatch spriteBatch)
+		{
+			var drawBox = GetDimensions().ToRectangle();
+
+			GUIHelper.DrawBox(spriteBatch, drawBox, ThemeHandler.ButtonColor);
+
+			Utils.DrawBorderString(spriteBatch, "Crafting", drawBox.Center.ToVector2(), Color.White, 1, 0.5f, 0.4f);
+
+			if (IsMouseHovering)
+			{
+				Main.LocalPlayer.mouseInterface = true;
+				Tooltip.SetName("Crafting");
+				Tooltip.SetTooltip(StorageSystem.stoneFlags.HasFlag(Stones.Citrine) ? "Craft items" : "Requires Citrine Dragonstone");
+			}
+		}
+
+		public override void LeftClick(UIMouseEvent evt)
+		{
+			if (StorageSystem.stoneFlags.HasFlag(Stones.Citrine))
+			{
+				RecipeBrowser rb = UILoader.GetUIState<RecipeBrowser>();
+				rb.visible = true;
+
+				if (!rb.initialized)
+				{
+					rb.Refresh();
+					rb.initialized = true;
+				}
+
+				rb.basePos = UILoader.GetUIState<VaultBrowser>().basePos;
+				rb.AdjustPositions(UILoader.GetUIState<VaultBrowser>().basePos);
+
+				UILoader.GetUIState<VaultBrowser>().visible = false;
+			}
+			else
+			{
+				Main.NewText("Requires Citrine Dragonstone", new Color(255, 100, 0));
 			}
 		}
 	}

@@ -30,16 +30,6 @@ namespace DragonVault.Content.Tiles
 				state.initialized = true;
 			}
 
-			// Temporary
-			RecipeBrowser rb = UILoader.GetUIState<RecipeBrowser>();
-			rb.visible = true;
-			rb.Refresh();
-			if (!rb.initialized)
-			{
-				rb.Refresh();
-				rb.initialized = true;
-			}
-
 			return true;
 		}
 

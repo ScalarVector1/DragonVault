@@ -126,22 +126,12 @@ namespace DragonVault.Content.Items.Dragonstones
 
 		public override void OnSlot()
 		{
-			ModContent.GetModTile(ModContent.TileType<Vault>()).AdjTiles = new int[]
-			{
-				TileID.WorkBenches,
-				TileID.Furnaces,
-				TileID.Anvils,
-				TileID.Sawmill,
-				TileID.Loom,
-				TileID.HeavyWorkBench,
-				TileID.GlassKiln,
-				TileID.Bottles
-			};
+
 		}
 
 		public override void Reset()
 		{
-			ModContent.GetModTile(ModContent.TileType<Vault>()).AdjTiles = new int[] { };
+
 		}
 	}
 
@@ -181,26 +171,12 @@ namespace DragonVault.Content.Items.Dragonstones
 
 		public override void OnSlot()
 		{
-			ModContent.GetModTile(ModContent.TileType<Vault>()).AdjTiles = new int[]
-			{
-				TileID.WorkBenches,
-				TileID.Furnaces,
-				TileID.Anvils,
-				TileID.Sawmill,
-				TileID.Loom,
-				TileID.HeavyWorkBench,
-				TileID.GlassKiln,
-				TileID.Bottles,
-				TileID.DemonAltar,
-				TileID.MythrilAnvil,
-				TileID.AdamantiteForge,
-				TileID.LunarCraftingStation
-			};
+
 		}
 
 		public override void Reset()
 		{
-			ModContent.GetModTile(ModContent.TileType<Vault>()).AdjTiles = new int[] { };
+
 		}
 	}
 

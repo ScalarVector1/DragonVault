@@ -17,7 +17,6 @@ Items: {
 		DisplayName: Cerulean Dragonstone
 		Tooltip:
 			'''
-			Allows the vault to be used as hardmode crafting stations
 			Your crafting crucible can be used at pylons
 			Dropped by any mechanical boss
 			'''
@@ -27,8 +26,7 @@ Items: {
 		DisplayName: Citrine Dragonstone
 		Tooltip:
 			'''
-			Allows the vault to be used as basic crafting stations
-			Allows you to craft from your vault near it and your crafting crucible
+			Allows you to craft from your vault 
 			Dropped by the Eater of Worlds or Brain of Cthulu
 			'''
 	}
