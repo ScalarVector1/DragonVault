@@ -59,7 +59,7 @@ namespace DragonVault.Content.Tiles
 
 			AdjTiles = tiles;
 
-			if (StorageSystem.stoneFlags.HasFlag(Items.Dragonstones.Stones.Radiant))
+			if (StorageSystem.stoneFlags.HasFlag(Items.Dragonstones.Stones.Pure))
 			{
 				var tile = Framing.GetTileSafely(i, j);
 				if (tile.TileFrameX == 0 && tile.TileFrameY == 0)
