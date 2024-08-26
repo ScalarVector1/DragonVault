@@ -35,7 +35,7 @@ namespace DragonVault.Content.GUI.Vault
 
 		public override string Name => "Crafting";
 
-		public override string IconTexture => "ItemSpawner";
+		public override string IconTexture => "InfiniteReach";
 
 		public override string HelpLink => "https://github.com/ScalarVector1/DragonVault/wiki/Item-spawner";
 
