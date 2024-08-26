@@ -44,6 +44,20 @@ namespace DragonVault.Content.Tiles
 				frame = 2;
 		}
 
+		public override void NearbyEffects(int i, int j, bool closer)
+		{
+			int count = CraftingSystem.stations?.Count ?? 0;
+
+			int[] tiles = new int[count];
+
+			for (int k = 0; k < count; k++)
+			{
+				tiles[k] = CraftingSystem.stations[k]?.createTile ?? -1;
+			}
+
+			AdjTiles = tiles;
+		}
+
 		#region quick setter
 		public static void QuickSetFurniture(ModTile tile, int width, int height, int dustType, SoundStyle? hitSound, bool tallBottom, Color mapColor, bool solidTop = false, bool solid = false, string mapName = "", AnchorData bottomAnchor = default, AnchorData topAnchor = default, int[] anchorTiles = null, bool faceDirection = false, bool wallAnchor = false, Point16 Origin = default)
 		{
