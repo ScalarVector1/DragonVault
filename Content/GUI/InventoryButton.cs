@@ -30,11 +30,11 @@ namespace DragonVault.Content.GUI
 
 		private void VaultClick(UIMouseEvent evt, UIElement listeningElement)
 		{
-			if ((StorageSystem.stoneFlags & Items.Dragonstones.Stones.Radiant) != 0)
+			if ((StorageSystem.stoneFlags & Items.Dragonstones.Stones.Cerulean) != 0)
 			{
 				VaultBrowser state = UILoader.GetUIState<VaultBrowser>();
 				state.visible = true;
-				state.canWithdraw = (StorageSystem.stoneFlags & Items.Dragonstones.Stones.Azure) != 0;
+				state.canWithdraw = StorageSystem.stoneFlags.HasFlag(Items.Dragonstones.Stones.Midnight);
 				state.fromTile = false;
 
 				if (!state.initialized)
@@ -45,7 +45,7 @@ namespace DragonVault.Content.GUI
 			}
 			else
 			{
-				Main.NewText("Requires Radiant Dragonstone", Color.Yellow);
+				Main.NewText("Requires Cerulean Dragonstone", new Color(10, 200, 200));
 			}
 		}
 
@@ -54,7 +54,7 @@ namespace DragonVault.Content.GUI
 			if (vaultButton.IsMouseHovering)
 			{
 				Tooltip.SetName("Remote Vault Access");
-				Tooltip.SetTooltip("Requires Radiant Dragonstone");
+				Tooltip.SetTooltip("Requires Cerulean Dragonstone");
 			}
 
 			base.Draw(spriteBatch);

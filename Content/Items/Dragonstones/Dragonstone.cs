@@ -111,12 +111,12 @@ namespace DragonVault.Content.Items.Dragonstones
 
 		public override void OnSlot()
 		{
-			StorageSystem.extraCapacity += 5000;
+
 		}
 
 		public override void Reset()
 		{
-			StorageSystem.extraCapacity = 0;
+
 		}
 	}
 
@@ -156,7 +156,7 @@ namespace DragonVault.Content.Items.Dragonstones
 
 		public override void OnSlot()
 		{
-			StorageSystem.extraCapacity += 10000;
+			StorageSystem.extraCapacity += 50000;
 		}
 
 		public override void Reset()
@@ -186,12 +186,12 @@ namespace DragonVault.Content.Items.Dragonstones
 
 		public override void OnSlot()
 		{
-			// enable full remote UI
+			StorageSystem.extraCapacity += 100000;
 		}
 
 		public override void Reset()
 		{
-
+			StorageSystem.extraCapacity = 0;
 		}
 	}
 
@@ -201,12 +201,12 @@ namespace DragonVault.Content.Items.Dragonstones
 
 		public override void OnSlot()
 		{
-			StorageSystem.extraCapacity += 1000000000;
+
 		}
 
 		public override void Reset()
 		{
-			StorageSystem.extraCapacity = 0;
+
 		}
 	}
 

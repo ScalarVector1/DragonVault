@@ -8,7 +8,7 @@ Items: {
 		DisplayName: Azure Dragonstone
 		Tooltip:
 			'''
-			Allows full remote access to the vault
+			Increases capacity by 100000
 			Dropped by Duke Fishron
 			'''
 	}
@@ -17,7 +17,7 @@ Items: {
 		DisplayName: Cerulean Dragonstone
 		Tooltip:
 			'''
-			Your crafting crucible can be used at pylons
+			Allows for remote depositing to your vault
 			Dropped by any mechanical boss
 			'''
 	}
@@ -35,7 +35,7 @@ Items: {
 		DisplayName: Midnight Dragonstone
 		Tooltip:
 			'''
-			Allows (near) infinite storage
+			Allows full remote access to the vault
 			Dropped by the Moon Lord
 			'''
 	}
@@ -53,7 +53,7 @@ Items: {
 		DisplayName: Radiant Dragonstone
 		Tooltip:
 			'''
-			Allows for remote depositing to your vault
+			Your crafting crucible can be used at pylons
 			Dropped by Skeletron
 			'''
 	}
@@ -62,7 +62,7 @@ Items: {
 		DisplayName: Rose Dragonstone
 		Tooltip:
 			'''
-			Increases capacity by 5000
+			Allows you to upgrade your storage size for gold
 			Dropped by Eye of Cthulu
 			'''
 	}
@@ -71,7 +71,7 @@ Items: {
 		DisplayName: Verdant Dragonstone
 		Tooltip:
 			'''
-			Increases capacity by 10000
+			Increases capacity by 50000
 			Dropped by the Wall of Flesh
 			'''
 	}

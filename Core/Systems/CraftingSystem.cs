@@ -33,7 +33,7 @@ namespace DragonVault.Core.Systems
 	{
 		public override int[] AdjTiles(int type)
 		{
-			if (type == TileID.TeleportationPylon && (StorageSystem.stoneFlags & Stones.Cerulean) > 0)
+			if (type == TileID.TeleportationPylon && StorageSystem.stoneFlags.HasFlag(Stones.Radiant))
 			{
 				int[] newAdj = new int[CraftingSystem.stations.Count];
 

@@ -238,7 +238,7 @@ namespace DragonVault.Content.GUI.Vault
 		{
 			if (!UILoader.GetUIState<VaultBrowser>().canWithdraw)
 			{
-				Main.NewText("Requires Azure Dragonstone", new Color(50, 50, 255));
+				Main.NewText("Requires Midnight Dragonstone", new Color(100, 10, 220));
 				return;
 			}
 
@@ -272,7 +272,7 @@ namespace DragonVault.Content.GUI.Vault
 		{
 			if (!UILoader.GetUIState<VaultBrowser>().canWithdraw)
 			{
-				Main.NewText("Requires Azure Dragonstone", new Color(50, 50, 255));
+				Main.NewText("Requires Midnight Dragonstone", new Color(100, 10, 220));
 				return;
 			}
 
@@ -338,6 +338,8 @@ namespace DragonVault.Content.GUI.Vault
 
 	internal class StorageButton : UIElement
 	{
+		public int GoldCost => (StorageSystem.baseCapacity - 20000) / 1000 + 10;
+
 		public StorageButton()
 		{
 			Width.Set(160, 0);
@@ -350,26 +352,42 @@ namespace DragonVault.Content.GUI.Vault
 
 			GUIHelper.DrawBox(spriteBatch, drawBox, ThemeHandler.ButtonColor);
 
-			Utils.DrawBorderString(spriteBatch, $"Increase storage", drawBox.Center.ToVector2() + new Vector2(0, -24), Color.White, 1, 0.5f, 0f);
-			Utils.DrawBorderString(spriteBatch, $"Cost: {StorageSystem.baseCapacity / 1000} gold", drawBox.Center.ToVector2() + new Vector2(0, 0), Color.Gold, 1, 0.5f, 0f);
+			if (!StorageSystem.stoneFlags.HasFlag(Stones.Rose))
+			{
+				Utils.DrawBorderString(spriteBatch, $"Increase storage", drawBox.Center.ToVector2() + new Vector2(0, -24), Color.White, 1, 0.5f, 0f);
+				Utils.DrawBorderString(spriteBatch, $"Cost: {GoldCost} gold", drawBox.Center.ToVector2() + new Vector2(0, 0), Color.Gold, 1, 0.5f, 0f);
+			}
+			else
+			{
+				Utils.DrawBorderString(spriteBatch, $"Slot the Rose Dragonstone\nto unlock storage upgrades!", drawBox.Center.ToVector2() + new Vector2(0, -24), new Color(255, 100, 100), 1, 0.5f, 0f);
+			}
 
 			if (IsMouseHovering)
+			{
 				Main.LocalPlayer.mouseInterface = true;
+			}
 		}
 
 		public override void LeftClick(UIMouseEvent evt)
 		{
-			if (Main.LocalPlayer.CanAfford(Item.buyPrice(0, StorageSystem.baseCapacity / 1000)))
+			if (StorageSystem.stoneFlags.HasFlag(Stones.Rose))
 			{
-				Main.LocalPlayer.PayCurrency(Item.buyPrice(0, StorageSystem.baseCapacity / 1000, 0, 0));
-				StorageSystem.baseCapacity += 2000;
-				Main.NewText($"Vault size increased to {StorageSystem.MaxCapacity} for {Main.worldName}!", Color.Gold);
+				if (Main.LocalPlayer.CanAfford(Item.buyPrice(0, GoldCost)))
+				{
+					Main.LocalPlayer.PayCurrency(Item.buyPrice(0, GoldCost));
+					StorageSystem.baseCapacity += 10000;
+					Main.NewText($"Vault size increased to {StorageSystem.MaxCapacity} for {Main.worldName}!", Color.Gold);
 
-				VaultNet.Data();
+					VaultNet.Data();
+				}
+				else
+				{
+					Main.NewText("Insufficient coins", Color.Red);
+				}
 			}
 			else
 			{
-				Main.NewText("Insufficient coins", Color.Red);
+				Main.NewText("Requires Rose Dragonstone", new Color(255, 100, 100));
 			}
 		}
 	}
@@ -445,6 +463,12 @@ namespace DragonVault.Content.GUI.Vault
 
 		public override void LeftClick(UIMouseEvent evt)
 		{
+			if (!UILoader.GetUIState<VaultBrowser>().canWithdraw)
+			{
+				Main.NewText("Requires Midnight Dragonstone", new Color(100, 10, 220));
+				return;
+			}
+
 			if (StorageSystem.stoneFlags.HasFlag(Stones.Citrine))
 			{
 				RecipeBrowser rb = UILoader.GetUIState<RecipeBrowser>();
