@@ -1,6 +1,8 @@
 ﻿using DragonVault.Content.GUI.Vault;
+using DragonVault.Content.Projectiles;
 using DragonVault.Core.Loaders.UILoading;
 using DragonVault.Core.Systems;
+using System.Linq;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
@@ -56,6 +58,18 @@ namespace DragonVault.Content.Tiles
 			}
 
 			AdjTiles = tiles;
+
+			if (StorageSystem.stoneFlags.HasFlag(Items.Dragonstones.Stones.Radiant))
+			{
+				var tile = Framing.GetTileSafely(i, j);
+				if (tile.TileFrameX == 0 && tile.TileFrameY == 0)
+				{
+					Vector2 center = new Vector2(i, j) * 16 + Vector2.UnitX * 32;
+
+					if (!Main.projectile.Any(n => n.active && n.type == ModContent.ProjectileType<DragonPet>() && Vector2.Distance(n.Center, center) <= 96f))
+						Projectile.NewProjectile(null, center + Vector2.UnitY * -16f, Vector2.Zero, ModContent.ProjectileType<DragonPet>(), 0, 0);
+				}
+			}
 		}
 
 		#region quick setter

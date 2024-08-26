@@ -352,14 +352,15 @@ namespace DragonVault.Content.GUI.Vault
 
 			GUIHelper.DrawBox(spriteBatch, drawBox, ThemeHandler.ButtonColor);
 
-			if (!StorageSystem.stoneFlags.HasFlag(Stones.Rose))
+			if (StorageSystem.stoneFlags.HasFlag(Stones.Rose))
 			{
 				Utils.DrawBorderString(spriteBatch, $"Increase storage", drawBox.Center.ToVector2() + new Vector2(0, -24), Color.White, 1, 0.5f, 0f);
 				Utils.DrawBorderString(spriteBatch, $"Cost: {GoldCost} gold", drawBox.Center.ToVector2() + new Vector2(0, 0), Color.Gold, 1, 0.5f, 0f);
 			}
 			else
 			{
-				Utils.DrawBorderString(spriteBatch, $"Slot the Rose Dragonstone\nto unlock storage upgrades!", drawBox.Center.ToVector2() + new Vector2(0, -24), new Color(255, 100, 100), 1, 0.5f, 0f);
+				Utils.DrawBorderString(spriteBatch, $"Increase storage", drawBox.Center.ToVector2() + new Vector2(0, -24), Color.White, 1, 0.5f, 0f);
+				Utils.DrawBorderString(spriteBatch, $"Unlock: Rose Dragonstone", drawBox.Center.ToVector2() + new Vector2(0, 0), new Color(255, 100, 100), 0.7f, 0.5f, 0f);
 			}
 
 			if (IsMouseHovering)
