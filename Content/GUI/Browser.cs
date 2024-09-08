@@ -115,11 +115,11 @@ namespace DragonVault.Content.GUI
 			sizeSlider = new(this);
 			Append(sizeSlider);
 
-			listButton = new("DragonLens/Assets/GUI/Play", () => listMode, LocalizationHelper.GetGUIText("Browser.ListView"));
+			listButton = new("DragonVault/Assets/GUI/Play", () => listMode, LocalizationHelper.GetGUIText("Browser.ListView"));
 			listButton.OnLeftClick += (n, k) => listMode = !listMode;
 			Append(listButton);
 
-			filterButton = new("DragonLens/Assets/GUI/Filter", () => filtersVisible, LocalizationHelper.GetGUIText("Browser.Filters"));
+			filterButton = new("DragonVault/Assets/GUI/Filter", () => filtersVisible, LocalizationHelper.GetGUIText("Browser.Filters"));
 			filterButton.OnLeftClick += (n, k) =>
 			{
 				filtersVisible = !filtersVisible;

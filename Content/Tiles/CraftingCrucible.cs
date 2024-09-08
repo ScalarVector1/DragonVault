@@ -1,6 +1,7 @@
 ﻿using DragonVault.Content.GUI.Crafting;
 using DragonVault.Core.Loaders.UILoading;
 using DragonVault.Core.Systems;
+using System.Collections.Generic;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
@@ -36,14 +37,45 @@ namespace DragonVault.Content.Tiles
 		{
 			int count = CraftingSystem.stations?.Count ?? 0;
 
-			int[] tiles = new int[count];
+			List<int> tiles = new();
 
 			for (int k = 0; k < count; k++)
 			{
-				tiles[k] = CraftingSystem.stations[k]?.createTile ?? -1;
+				var type = CraftingSystem.stations[k]?.createTile ?? -1;
+				tiles.Add(type);
+
+				switch (type)
+				{
+					case 77:
+					case 302:
+						tiles.Add(17);
+						break;
+					case 133:
+						tiles.Add(17);
+						tiles.Add(77);
+						break;
+					case 134:
+						tiles.Add(16);
+						break;
+					case 354:
+					case 469:
+					case 487:
+						tiles.Add(14);
+						break;
+					case 355:
+						tiles.Add(13);
+						tiles.Add(14);
+						Main.LocalPlayer.alchemyTable = true;
+						break;
+				}
+
+				if (ModContent.GetModTile(type) != null)
+				{
+					tiles.AddRange(ModContent.GetModTile(type).AdjTiles);
+				}
 			}
 
-			AdjTiles = tiles;
+			AdjTiles = tiles.ToArray();
 		}
 
 		#region quick setter

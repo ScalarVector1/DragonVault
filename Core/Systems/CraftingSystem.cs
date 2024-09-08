@@ -35,12 +35,47 @@ namespace DragonVault.Core.Systems
 		{
 			if (type == TileID.TeleportationPylon && StorageSystem.stoneFlags.HasFlag(Stones.Radiant))
 			{
-				int[] newAdj = new int[CraftingSystem.stations.Count];
+				int count = CraftingSystem.stations?.Count ?? 0;
 
-				for (int k = 0; k < CraftingSystem.stations.Count; k++)
+				List<int> tiles = new();
+
+				for (int k = 0; k < count; k++)
 				{
-					newAdj[k] = CraftingSystem.stations[k].createTile;
+					var type2 = CraftingSystem.stations[k]?.createTile ?? -1;
+					tiles.Add(type2);
+
+					switch (type2)
+					{
+						case 77:
+						case 302:
+							tiles.Add(17);
+							break;
+						case 133:
+							tiles.Add(17);
+							tiles.Add(77);
+							break;
+						case 134:
+							tiles.Add(16);
+							break;
+						case 354:
+						case 469:
+						case 487:
+							tiles.Add(14);
+							break;
+						case 355:
+							tiles.Add(13);
+							tiles.Add(14);
+							Main.LocalPlayer.alchemyTable = true;
+							break;
+					}
+
+					if (ModContent.GetModTile(type2) != null)
+					{
+						tiles.AddRange(ModContent.GetModTile(type2).AdjTiles);
+					}
 				}
+
+				int[] newAdj = tiles.ToArray();
 
 				return newAdj;
 			}
