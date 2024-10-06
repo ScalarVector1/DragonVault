@@ -2,6 +2,15 @@ Browser: {
 	ListView: List view
 	Filters: Filters
 
+	Sort: {
+		ID: By ID
+		Alphabetical: Alphabetical
+		Damage: By Damage
+		Defense: By Defense
+		Value: By Gold Value
+		Life: By Maximum Life
+	}
+
 	ButtonSizeSlider: {
 		Name: Button scale
 		Tooltip: Drag to adjust the size of buttons in the browser
