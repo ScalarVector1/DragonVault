@@ -15,6 +15,8 @@ namespace DragonVault.Core.Systems
 		public static List<ItemEntry> vault = new();
 		public static Dictionary<int, List<ItemEntry>> vaultByID = new();
 		public static List<Item> craftingCache = new();
+		public static List<string> Favorites = new();
+		public static List<string> CraftFavorites = new();
 
 		public static int baseCapacity = 20000;
 		public static int extraCapacity = 0;
@@ -150,6 +152,8 @@ namespace DragonVault.Core.Systems
 			tag["vault"] = tags;
 			tag["capacity"] = baseCapacity;
 			tag["stones"] = (int)stoneFlags;
+			tag["Favorites"] = Favorites;
+			tag["CraftFavorites"] = CraftFavorites;
 		}
 
 		/// <summary>
@@ -184,6 +188,9 @@ namespace DragonVault.Core.Systems
 				if ((stoneFlags & stone) > 0)
 					(Dragonstone.samples[stone].ModItem as Dragonstone).OnSlot();
 			}
+
+			Favorites = (List<string>)tag.GetList<string>("Favorites");
+			CraftFavorites = (List<string>)tag.GetList<string>("CraftFavorites");
 		}
 	}
 
@@ -256,6 +263,7 @@ namespace DragonVault.Core.Systems
 	{
 		public Item item;
 		public int simStack;
+		public string guid;
 
 		public ItemEntry() { }
 
@@ -263,6 +271,7 @@ namespace DragonVault.Core.Systems
 		{
 			this.item = item;
 			simStack = 0;
+			guid = Guid.NewGuid().ToString();
 		}
 
 		/// <summary>
@@ -327,6 +336,7 @@ namespace DragonVault.Core.Systems
 		{
 			tag["item"] = item;
 			tag["stack"] = simStack;
+			tag["guid"] = guid;
 		}
 
 		/// <summary>
@@ -337,6 +347,11 @@ namespace DragonVault.Core.Systems
 		{
 			item = tag.Get<Item>("item");
 			simStack = tag.GetInt("stack");
+			guid = tag.GetString("guid");
+
+			// fallback for legacy saves
+			if (string.IsNullOrEmpty(guid))
+				guid = Guid.NewGuid().ToString();
 		}
 	}
 }

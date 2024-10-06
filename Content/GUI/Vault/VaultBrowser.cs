@@ -33,6 +33,8 @@ namespace DragonVault.Content.GUI.Vault
 
 		public override Vector2 DefaultPosition => new(0.6f, 0.4f);
 
+		public override List<string> Favorites => StorageSystem.Favorites;
+
 		public override void PostInitialize()
 		{
 			button = new();
@@ -115,6 +117,17 @@ namespace DragonVault.Content.GUI.Vault
 			filters.AddFilter(new Filter(Assets.Filters.Master, "Tools.ItemSpawner.Filters.Master", n => n is ItemButton ib && !ib.entry.item.master));
 			filters.AddFilter(new Filter(Assets.Filters.Material, "Tools.ItemSpawner.Filters.Material", n => n is ItemButton ib && !ItemID.Sets.IsAMaterial[ib.entry.item.type]));
 			filters.AddFilter(new Filter(Assets.Filters.Unknown, "Tools.ItemSpawner.Filters.Deprecated", n => n is ItemButton ib && !ItemID.Sets.Deprecated[ib.entry.item.type]));
+		}
+
+		public override void SetupSorts()
+		{
+			SortModes.Add(new("ID", (a, b) => (a as ItemButton).entry.item.type - (b as ItemButton).entry.item.type));
+			SortModes.Add(new("Alphabetical", (a, b) => a.Identifier.CompareTo(b.Identifier)));
+			SortModes.Add(new("Damage", (a, b) => -1 * ((a as ItemButton).entry.item.damage - (b as ItemButton).entry.item.damage)));
+			SortModes.Add(new("Defense", (a, b) => -1 * ((a as ItemButton).entry.item.defense - (b as ItemButton).entry.item.defense)));
+			SortModes.Add(new("Value", (a, b) => -1 * ((a as ItemButton).entry.item.value - (b as ItemButton).entry.item.value)));
+
+			SortFunction = SortModes.First().Function;
 		}
 
 		public override void AdjustPositions(Vector2 newPos)
@@ -210,6 +223,8 @@ namespace DragonVault.Content.GUI.Vault
 		public Item renderCopy;
 
 		public override string Identifier => entry.item.Name;
+
+		public override string Key => entry.guid;
 
 		public ItemButton(ItemEntry item, Browser browser) : base(browser)
 		{
@@ -328,11 +343,6 @@ namespace DragonVault.Content.GUI.Vault
 						VaultBrowser.Rebuild();
 				}
 			}
-		}
-
-		public override int CompareTo(object obj)
-		{
-			return entry.item.type - (obj as ItemButton).entry.item.type;
 		}
 	}
 

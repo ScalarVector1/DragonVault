@@ -44,6 +44,8 @@ namespace DragonVault.Content.GUI.Vault
 
 		public override Vector2 DefaultPosition => new(0.6f, 0.4f);
 
+		public override List<string> Favorites => StorageSystem.CraftFavorites;
+
 		public override void PostInitialize()
 		{
 			display = new();
@@ -121,6 +123,17 @@ namespace DragonVault.Content.GUI.Vault
 			filters.AddFilter(new Filter(Assets.Filters.Master, "Tools.ItemSpawner.Filters.Master", n => n is RecipeButton ib && !ib.result.master));
 			filters.AddFilter(new Filter(Assets.Filters.Material, "Tools.ItemSpawner.Filters.Material", n => n is RecipeButton ib && !ItemID.Sets.IsAMaterial[ib.result.type]));
 			filters.AddFilter(new Filter(Assets.Filters.Unknown, "Tools.ItemSpawner.Filters.Deprecated", n => n is RecipeButton ib && !ItemID.Sets.Deprecated[ib.result.type]));
+		}
+
+		public override void SetupSorts()
+		{
+			SortModes.Add(new("ID", (a, b) => (a as RecipeButton).result.type - (b as RecipeButton).result.type));
+			SortModes.Add(new("Alphabetical", (a, b) => a.Identifier.CompareTo(b.Identifier)));
+			SortModes.Add(new("Damage", (a, b) => -1 * ((a as RecipeButton).result.damage - (b as RecipeButton).result.damage)));
+			SortModes.Add(new("Defense", (a, b) => -1 * ((a as RecipeButton).result.defense - (b as RecipeButton).result.defense)));
+			SortModes.Add(new("Value", (a, b) => -1 * ((a as RecipeButton).result.value - (b as RecipeButton).result.value)));
+
+			SortFunction = SortModes.First().Function;
 		}
 
 		public override void DraggableUpdate(GameTime gameTime)
@@ -418,6 +431,8 @@ namespace DragonVault.Content.GUI.Vault
 
 		public override string Identifier => result.Name;
 
+		public override string Key => recipe.RecipeIndex.ToString();
+
 		public RecipeButton(Browser parent, Recipe recipe) : base(parent)
 		{
 			this.recipe = recipe;
@@ -462,14 +477,6 @@ namespace DragonVault.Content.GUI.Vault
 		{
 			RecipeBrowser.display.activeRecipe = recipe;
 			RecipeBrowser.display.Repopulate();
-		}
-
-		public override int CompareTo(object obj)
-		{
-			if (obj is RecipeButton button)
-				return result.type.CompareTo(button.result.type);
-
-			return base.CompareTo(obj);
 		}
 	}
 

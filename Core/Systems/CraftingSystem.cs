@@ -1,6 +1,7 @@
 ﻿using DragonVault.Content.Items.Dragonstones;
 using System.Collections.Generic;
 using Terraria.ID;
+using Terraria.ModLoader.Default;
 using Terraria.ModLoader.IO;
 
 namespace DragonVault.Core.Systems
@@ -41,6 +42,9 @@ namespace DragonVault.Core.Systems
 
 				for (int k = 0; k < count; k++)
 				{
+					if (CraftingSystem.stations[k].type == ModContent.ItemType<UnloadedItem>())
+						continue;
+
 					var type2 = CraftingSystem.stations[k]?.createTile ?? -1;
 					tiles.Add(type2);
 

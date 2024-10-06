@@ -9,6 +9,7 @@ using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ID;
 using Terraria.Localization;
+using Terraria.ModLoader.Default;
 using Terraria.ObjectData;
 
 namespace DragonVault.Content.Tiles
@@ -55,6 +56,9 @@ namespace DragonVault.Content.Tiles
 
 			for (int k = 0; k < count; k++)
 			{
+				if (CraftingSystem.stations[k].type == ModContent.ItemType<UnloadedItem>())
+					continue;
+
 				var type = CraftingSystem.stations[k]?.createTile ?? -1;
 				tiles.Add(type);
 
