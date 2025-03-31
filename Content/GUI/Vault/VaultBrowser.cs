@@ -213,6 +213,9 @@ namespace DragonVault.Content.GUI.Vault
 		{
 			UILoader.GetUIState<VaultBrowser>().options.Clear();
 			UILoader.GetUIState<VaultBrowser>().PopulateGrid(UILoader.GetUIState<VaultBrowser>().options);
+
+			UILoader.GetUIState<VaultBrowser>().Recalculate();
+			UILoader.GetUIState<VaultBrowser>().Recalculate();
 		}
 	}
 
@@ -445,6 +448,9 @@ namespace DragonVault.Content.GUI.Vault
 						VaultBrowser.Rebuild();
 				}
 			}
+
+			UILoader.GetUIState<VaultBrowser>().Recalculate();
+			UILoader.GetUIState<VaultBrowser>().Recalculate();
 		}
 	}
 
@@ -494,6 +500,8 @@ namespace DragonVault.Content.GUI.Vault
 				rb.basePos = UILoader.GetUIState<VaultBrowser>().basePos;
 				rb.AdjustPositions(UILoader.GetUIState<VaultBrowser>().basePos);
 				rb.fromTile = UILoader.GetUIState<VaultBrowser>().fromTile;
+
+				rb.RecalculateEverything();
 
 				UILoader.GetUIState<VaultBrowser>().visible = false;
 			}

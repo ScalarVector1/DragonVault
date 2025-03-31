@@ -71,6 +71,9 @@ namespace DragonVault.Core.Systems
 
 			if (vaultByID.ContainsKey(newItem.type))
 			{
+				UILoader.GetUIState<VaultBrowser>().Recalculate();
+				UILoader.GetUIState<VaultBrowser>().Recalculate();
+
 				List<ItemEntry> possibles = vaultByID[newItem.type];
 
 				foreach (ItemEntry possible in possibles)

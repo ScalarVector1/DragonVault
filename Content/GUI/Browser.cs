@@ -473,6 +473,8 @@ namespace DragonVault.Content.GUI
 
 				if (!Main.mouseLeft)
 					dragging = false;
+
+				parent.Recalculate();
 			}
 			else
 			{

@@ -462,12 +462,15 @@ namespace DragonVault.Content.GUI.Vault
 
 		public override void SafeUpdate(GameTime gameTime)
 		{
-			craftable = false;
-
-			for(int k = 0; k < Main.numAvailableRecipes; k++)
+			if (Main.GameUpdateCount % 60 == (index % 60))
 			{
-				if (Main.availableRecipe[k] == index)
-					craftable = true;
+				craftable = false;
+
+				for (int k = 0; k < Main.numAvailableRecipes; k++)
+				{
+					if (Main.availableRecipe[k] == index)
+						craftable = true;
+				}
 			}
 
 			base.SafeUpdate(gameTime);
@@ -657,6 +660,8 @@ namespace DragonVault.Content.GUI.Vault
 			rb.basePos = UILoader.GetUIState<RecipeBrowser>().basePos;
 			rb.AdjustPositions(UILoader.GetUIState<RecipeBrowser>().basePos);
 			rb.fromTile = UILoader.GetUIState<RecipeBrowser>().fromTile;
+
+			rb.RecalculateEverything();
 
 			UILoader.GetUIState<RecipeBrowser>().visible = false;
 		}
