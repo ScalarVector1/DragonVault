@@ -135,6 +135,9 @@ namespace DragonVault.Content.GUI.Crafting
 
 				slots.Add(newSlot);
 			}
+
+			Recalculate();
+			Recalculate();
 		}
 	}
 

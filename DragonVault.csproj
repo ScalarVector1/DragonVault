@@ -12,6 +12,6 @@
     <None Remove="Localization\Tools\en-US_Mods.DragonVault.Tools.hjson" />
   </ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="AssGen" OutputItemType="Analyzer" ReferenceOutputAssembly="false" Version="1.0.1" />
+		<PackageReference Include="AssGen" OutputItemType="Analyzer" ReferenceOutputAssembly="false" Version="3.0.0" />
 	</ItemGroup>
 </Project>

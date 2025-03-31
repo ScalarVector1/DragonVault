@@ -63,7 +63,17 @@ namespace DragonVault.Content.GUI
 		/// </summary>
 		public void SortGrid()
 		{
+			foreach (UIElement item in options._items)
+			{
+				if (item is BrowserButton button)
+					button.ShrinkIfFiltered();
+			}
+
 			options.UpdateOrder();
+
+			// UIGrid is funny and wants this.
+			Recalculate();
+			Recalculate();
 		}
 
 		/// <summary>
@@ -131,11 +141,16 @@ namespace DragonVault.Content.GUI
 			sizeSlider = new(this);
 			Append(sizeSlider);
 
-			listButton = new("DragonVault/Assets/GUI/Play", () => listMode, LocalizationHelper.GetGUIText("Browser.ListView"));
-			listButton.OnLeftClick += (n, k) => listMode = !listMode;
+			listButton = new("DragonLens/Assets/GUI/Play", () => listMode, LocalizationHelper.GetGUIText("Browser.ListView"));
+			listButton.OnLeftClick += (n, k) =>
+			{
+				listMode = !listMode;
+				Recalculate();
+				Recalculate();
+			};
 			Append(listButton);
 
-			filterButton = new("DragonVault/Assets/GUI/Filter", () => filtersVisible, LocalizationHelper.GetGUIText("Browser.Filters"));
+			filterButton = new("DragonLens/Assets/GUI/Filter", () => filtersVisible, LocalizationHelper.GetGUIText("Browser.Filters"));
 			filterButton.OnLeftClick += (n, k) =>
 			{
 				filtersVisible = !filtersVisible;
@@ -143,6 +158,9 @@ namespace DragonVault.Content.GUI
 					filters.Width.Set(220, 0);
 				else
 					filters.Width.Set(0, 0);
+
+				filters.Recalculate();
+				Recalculate();
 			};
 			Append(filterButton);
 
@@ -159,6 +177,12 @@ namespace DragonVault.Content.GUI
 			filters = new(this);
 			filters.Width.Set(0, 0);
 			filters.Height.Set(420, 0);
+
+			if (filtersVisible)
+				filters.Width.Set(220, 0);
+			else
+				filters.Width.Set(0, 0);
+
 			Append(filters);
 
 			SetupFilters(filters);
@@ -202,6 +226,8 @@ namespace DragonVault.Content.GUI
 			OnInitialize();
 			PopulateGrid(options);
 			SortGrid();
+
+			Recalculate();
 		}
 
 		public override void Draw(SpriteBatch spriteBatch)
@@ -233,6 +259,7 @@ namespace DragonVault.Content.GUI
 		public Browser parent;
 
 		public static int drawDelayTimer = 2; //Here so we dont draw on the first frame of the grid populating, causing a lag bonanza since every single button tries to draw.
+		public bool filtered;
 
 		public abstract string Identifier { get; }
 		public abstract string Key { get; } // Key used for favorites
@@ -249,9 +276,8 @@ namespace DragonVault.Content.GUI
 			this.parent = parent;
 		}
 
-		public override void SafeUpdate(GameTime gameTime)
+		public void ShrinkIfFiltered()
 		{
-			//Will likely need a better solution to optimize when not constantly searching
 			if (!Identifier.ToLower().Contains(parent.searchBar.currentValue.ToLower()) || parent.ShouldBeFiltered(this))
 			{
 				Width.Set(0, 0);
@@ -261,8 +287,19 @@ namespace DragonVault.Content.GUI
 				MarginRight = 0;
 				MarginTop = 0;
 				MarginBottom = 0;
-				return;
+
+				filtered = true;
 			}
+			else
+			{
+				filtered = false;
+			}
+		}
+
+		public override void SafeUpdate(GameTime gameTime)
+		{
+			if (filtered)
+				return;
 
 			if (IsMouseHovering && !Main.oldKeyState.IsKeyDown(Main.FavoriteKey) && Main.keyState.IsKeyDown(Main.FavoriteKey))
 			{
@@ -273,27 +310,19 @@ namespace DragonVault.Content.GUI
 
 				parent.SortGrid();
 			}
-
-			if (parent.listMode)
-				UpdateAsList();
-			else
-				UpdateAsGrid();
 		}
 
 		private void UpdateAsGrid()
 		{
 			int size = (int)MathHelper.Clamp(parent.buttonSize, 36, 108);
 
-			if (GetDimensions().Width != size || MarginLeft == 0)
-			{
-				Width.Set(size, 0);
-				Height.Set(size, 0);
+			Width.Set(size, 0);
+			Height.Set(size, 0);
 
-				MarginLeft = 2;
-				MarginRight = 2;
-				MarginTop = 2;
-				MarginBottom = 2;
-			}
+			MarginLeft = 2;
+			MarginRight = 2;
+			MarginTop = 2;
+			MarginBottom = 2;
 		}
 
 		private void UpdateAsList()
@@ -309,10 +338,26 @@ namespace DragonVault.Content.GUI
 			MarginBottom = 2;
 		}
 
+		public override void Recalculate()
+		{
+			if (!filtered)
+			{
+				if (parent.listMode)
+					UpdateAsList();
+				else
+					UpdateAsGrid();
+			}
+
+			base.Recalculate();
+		}
+
 		public virtual void SafeDraw(SpriteBatch spriteBatch, Rectangle iconArea) { }
 
 		public sealed override void Draw(SpriteBatch spriteBatch)
 		{
+			if (filtered)
+				return;
+
 			if (GetDimensions().Width <= 0)
 				return;
 
@@ -363,10 +408,7 @@ namespace DragonVault.Content.GUI
 			base.SafeUpdate(gameTime);
 
 			if (updated)
-			{
-				BrowserButton.drawDelayTimer = 2;
 				(Parent as Browser)?.SortGrid();
-			}
 		}
 
 		public override void Draw(SpriteBatch spriteBatch)

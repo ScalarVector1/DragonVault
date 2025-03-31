@@ -30,6 +30,8 @@ namespace DragonVault.Content.GUI.FieldEditors
 		// In order to check if there is a composition string before backspace is typed, we need to check the previous state
 		private bool _oldHasCompositionString;
 
+		public static TextField CurrentSelected;
+
 		public TextField(InputType inputType = InputType.text)
 		{
 			this.inputType = inputType;
@@ -37,14 +39,28 @@ namespace DragonVault.Content.GUI.FieldEditors
 			Height.Set(24, 0);
 		}
 
-		public override void SafeClick(UIMouseEvent evt)
+		public void SetTyping()
 		{
 			typing = true;
+			Main.blockInput = true;
+
+			CurrentSelected = this;
+		}
+
+		public void SetNotTyping()
+		{
+			typing = false;
+			Main.blockInput = false;
+		}
+
+		public override void SafeClick(UIMouseEvent evt)
+		{
+			SetTyping();
 		}
 
 		public override void SafeRightClick(UIMouseEvent evt)
 		{
-			typing = true;
+			SetTyping();
 			currentValue = "";
 			updated = true;
 		}
@@ -60,14 +76,14 @@ namespace DragonVault.Content.GUI.FieldEditors
 			if (updated)
 				reset = true;
 
-			if (Main.mouseLeft && !IsMouseHovering)
-				typing = false;
+			if (Main.mouseLeft && !IsMouseHovering || CurrentSelected != this)
+				SetNotTyping();
 		}
 
 		public void HandleText()
 		{
 			if (Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Escape))
-				typing = false;
+				SetNotTyping();
 
 			PlayerInput.WritingText = true;
 			Main.instance.HandleIME();
@@ -122,7 +138,7 @@ namespace DragonVault.Content.GUI.FieldEditors
 			Vector2 pos = GetDimensions().Position() + Vector2.One * 4;
 
 			const float scale = 0.75f;
-			string displayed = currentValue;
+			string displayed = currentValue ?? "";
 
 			Utils.DrawBorderString(spriteBatch, displayed, pos, Color.White, scale);
 

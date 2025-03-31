@@ -34,7 +34,11 @@ namespace DragonVault.Content.GUI
 		/// </summary>
 		public Rectangle BoundingBox => new((int)basePos.X, (int)basePos.Y, width, height);
 
-		public override bool Visible => visible;
+		public override bool Visible
+		{
+			get => visible;
+			set => visible = value;
+		}
 
 		/// <summary>
 		/// Where the main window will be placed initially
@@ -58,9 +62,9 @@ namespace DragonVault.Content.GUI
 
 		public sealed override void OnInitialize()
 		{
-			basePos = new Vector2(DefaultPosition.X * Main.screenWidth / Main.UIScale, DefaultPosition.Y * Main.screenHeight / Main.UIScale);
+			basePos = new Vector2(DefaultPosition.X * Main.screenWidth, DefaultPosition.Y * Main.screenHeight);
 
-			closeButton = new UIImageButton(ModContent.Request<Texture2D>("DragonVault/Assets/GUI/Remove"));
+			closeButton = new UIImageButton(Assets.GUI.Remove);
 			closeButton.Width.Set(16, 0);
 			closeButton.Height.Set(16, 0);
 			closeButton.OnLeftClick += (a, b) => visible = false;
@@ -68,7 +72,7 @@ namespace DragonVault.Content.GUI
 
 			if (HelpLink != "")
 			{
-				helpButton = new UIImageButton(ModContent.Request<Texture2D>("DragonVault/Assets/GUI/Help"));
+				helpButton = new UIImageButton(Assets.GUI.Help);
 				helpButton.Width.Set(16, 0);
 				helpButton.Height.Set(16, 0);
 				helpButton.OnLeftClick += (a, b) => GUIHelper.OpenUrl(HelpLink);
@@ -76,14 +80,13 @@ namespace DragonVault.Content.GUI
 			}
 
 			SafeOnInitialize();
+			RecalculateEverything();
 
 			base.OnInitialize();
 		}
 
 		public sealed override void SafeUpdate(GameTime gameTime)
 		{
-			Recalculate();
-
 			if (!Main.mouseLeft && dragging)
 				dragging = false;
 
@@ -94,13 +97,25 @@ namespace DragonVault.Content.GUI
 				if (dragOff == Vector2.Zero)
 					dragOff = Main.MouseScreen - basePos;
 
+				Vector2 oldPos = basePos;
 				basePos = Main.MouseScreen - dragOff;
+
+				if (oldPos != basePos)
+					RecalculateEverything();
 			}
 			else
 			{
 				dragOff = Vector2.Zero;
 			}
 
+			if (BoundingBox.Contains(Main.MouseScreen.ToPoint()))
+				Main.LocalPlayer.mouseInterface = true;
+
+			DraggableUpdate(gameTime);
+		}
+
+		public void RecalculateEverything()
+		{
 			closeButton.Left.Set(basePos.X + width - 24, 0);
 			closeButton.Top.Set(basePos.Y + 8, 0);
 
@@ -121,11 +136,6 @@ namespace DragonVault.Content.GUI
 
 			AdjustPositions(basePos);
 			Recalculate();
-
-			if (BoundingBox.Contains(Main.MouseScreen.ToPoint()))
-				Main.LocalPlayer.mouseInterface = true;
-
-			DraggableUpdate(gameTime);
 		}
 	}
 }
