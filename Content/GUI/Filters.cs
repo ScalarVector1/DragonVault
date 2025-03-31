@@ -55,7 +55,7 @@ namespace DragonVault.Content.GUI
 			drawBox.Height = (int)MathHelper.Min(420, filters.GetTotalHeight() + 20);
 
 			if (drawBox.Contains(Main.MouseScreen.ToPoint()))
-				PlayerInput.LockVanillaMouseScroll("DragonLens: Filter Panel");
+				PlayerInput.LockVanillaMouseScroll("DragonVault: Filter Panel");
 
 			bar.Height.Set(drawBox.Height - 20, 0);
 

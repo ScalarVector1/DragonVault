@@ -1,6 +1,7 @@
 Browser: {
 	ListView: List view
 	Filters: Filters
+	Sorts: Sort mode
 
 	Sort: {
 		ID: By ID

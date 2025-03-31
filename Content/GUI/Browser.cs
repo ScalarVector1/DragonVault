@@ -141,7 +141,7 @@ namespace DragonVault.Content.GUI
 			sizeSlider = new(this);
 			Append(sizeSlider);
 
-			listButton = new("DragonLens/Assets/GUI/Play", () => listMode, LocalizationHelper.GetGUIText("Browser.ListView"));
+			listButton = new("DragonVault/Assets/GUI/Play", () => listMode, LocalizationHelper.GetGUIText("Browser.ListView"));
 			listButton.OnLeftClick += (n, k) =>
 			{
 				listMode = !listMode;
@@ -150,7 +150,7 @@ namespace DragonVault.Content.GUI
 			};
 			Append(listButton);
 
-			filterButton = new("DragonLens/Assets/GUI/Filter", () => filtersVisible, LocalizationHelper.GetGUIText("Browser.Filters"));
+			filterButton = new("DragonVault/Assets/GUI/Filter", () => filtersVisible, LocalizationHelper.GetGUIText("Browser.Filters"));
 			filterButton.OnLeftClick += (n, k) =>
 			{
 				filtersVisible = !filtersVisible;
@@ -164,7 +164,7 @@ namespace DragonVault.Content.GUI
 			};
 			Append(filterButton);
 
-			sortButton = new("DragonLens/Assets/GUI/Sort", () => false, LocalizationHelper.GetGUIText("Browser.Sorts"), () => LocalizationHelper.GetGUIText($"Browser.Sort.{SortModes[sortIndex].Name}"));
+			sortButton = new("DragonVault/Assets/GUI/Sort", () => false, LocalizationHelper.GetGUIText("Browser.Sorts"), () => LocalizationHelper.GetGUIText($"Browser.Sort.{SortModes[sortIndex].Name}"));
 			sortButton.OnLeftClick += (n, k) =>
 			{
 				sortIndex++;
