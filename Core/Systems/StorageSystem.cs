@@ -6,6 +6,7 @@ using DragonVault.Core.Networking;
 using System;
 using System.Collections.Generic;
 using Terraria.ID;
+using Terraria.ModLoader.Default;
 using Terraria.ModLoader.IO;
 
 namespace DragonVault.Core.Systems
@@ -59,11 +60,11 @@ namespace DragonVault.Core.Systems
 		/// </summary>
 		/// <param name="newItem">The item to add</param>
 		/// <returns>If the item was able to be atleast partially added or not</returns>
-		public static bool TryAddItem(Item newItem, out ItemEntry newEntry)
+		public static bool TryAddItem(Item newItem, out ItemEntry entryAddedTo)
 		{
-			newEntry = null;
+			entryAddedTo = null;
 
-			if (newItem is null || newItem.IsAir || newItem.stack <= 0)
+			if (newItem is null || newItem.IsAir || newItem.stack <= 0 || newItem.ModItem is UnloadedItem)
 				return false;
 
 			if (RemainingCapacity <= 0)
@@ -79,16 +80,19 @@ namespace DragonVault.Core.Systems
 				foreach (ItemEntry possible in possibles)
 				{
 					if (possible.TryDeposit(newItem))
+					{
+						entryAddedTo = possible;
 						return true;
+					}
 				}
 
-				newEntry = NewEntry(newItem.Clone());
-				return newEntry.TryDeposit(newItem);
+				entryAddedTo = NewEntry(newItem.Clone());
+				return entryAddedTo.TryDeposit(newItem);
 			}
 			else
 			{
-				newEntry = NewEntry(newItem.Clone());
-				return newEntry.TryDeposit(newItem);
+				entryAddedTo = NewEntry(newItem.Clone());
+				return entryAddedTo.TryDeposit(newItem);
 			}
 		}
 
@@ -242,7 +246,7 @@ namespace DragonVault.Core.Systems
 							if (possible.CheckGone())
 								VaultBrowser.Rebuild();
 
-							VaultNet.SendWithdrawl(withdrawl, possible.item);
+							VaultNet.SendItemUpdate(possible);
 							return;
 						}
 

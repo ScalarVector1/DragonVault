@@ -6,32 +6,17 @@ namespace DragonVault.Core.Networking
 {
 	internal class VaultNet : ModSystem
 	{
-		public static void SendWithdrawl(int amount, Item item, int toClient = -1, int ignoreClient = -1)
+		public static void SendItemUpdate(ItemEntry entry, int toClient = -1, int ignoreClient = -1)
 		{
 			if (Main.netMode == NetmodeID.SinglePlayer) //single player dosent care about packets
 				return;
 
-			ModLoader.GetMod("DragonVault").Logger.Info($"Sending withdrawl of {amount} {item.Name}");
+			ModLoader.GetMod("DragonVault").Logger.Info($"Sending item update for {entry.simStack} {entry.item.Name}");
 
 			ModPacket packet = ModLoader.GetMod("DragonVault").GetPacket();
-			packet.Write("Withdrawl");
-			packet.Write(amount);
-			ItemIO.Send(item, packet);
-
-			packet.Send(toClient, ignoreClient);
-		}
-
-		public static void SendDeposit(int amount, Item item, int toClient = -1, int ignoreClient = -1)
-		{
-			if (Main.netMode == NetmodeID.SinglePlayer) //single player dosent care about packets
-				return;
-
-			ModLoader.GetMod("DragonVault").Logger.Info($"Sending deposit of {amount} {item.Name}");
-
-			ModPacket packet = ModLoader.GetMod("DragonVault").GetPacket();
-			packet.Write("Deposit");
-			packet.Write(amount);
-			ItemIO.Send(item, packet);
+			packet.Write("ItemUpdate");
+			packet.Write(entry.simStack);
+			ItemIO.Send(entry.item, packet);
 
 			packet.Send(toClient, ignoreClient);
 		}

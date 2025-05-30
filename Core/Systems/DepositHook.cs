@@ -17,12 +17,14 @@ namespace DragonVault.Core.Systems
 			if (UILoader.GetUIState<VaultBrowser>().visible && Main.mouseLeft && Main.keyState.PressingShift())
 			{
 				Item item = inv[slot].Clone();
-				VaultNet.SendDeposit(item.stack, item);
 
-				bool added = StorageSystem.TryAddItem(inv[slot], out ItemEntry newEntry);
+				bool added = StorageSystem.TryAddItem(inv[slot], out ItemEntry entryAddedTo);
 
-				if (added && newEntry != null)
+				if (added)
+				{
+					VaultNet.SendItemUpdate(entryAddedTo);
 					VaultBrowser.Rebuild();
+				}
 
 				return;
 			}

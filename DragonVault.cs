@@ -20,52 +20,48 @@ namespace DragonVault
 		{
 			string type = reader.ReadString();
 
-			if (type == "Withdrawl")
+			if (type == "ItemUpdate")
 			{
 				int amount = reader.ReadInt32();
 				Item item = ItemIO.Receive(reader);
 				Item toSync = item.Clone();
 
-				Logger.Info($"Withdrawl of {amount} {item.Name} recieved.");
+				ItemEntry entry = null;
 
-				ItemEntry entry = StorageSystem.vaultByID[item.type].Find(n => Helpers.Helper.CanStack(n.item, item));
+				Logger.Info($"Update for {amount} {item.Name} recieved.");
 
-				if (entry is null)
+				if (StorageSystem.vaultByID.ContainsKey(item.type))
 				{
-					Logger.Warn("Failed to find item entry for a withdrawl packet! Has it already been withdrawn?");
-					return;
+					entry = StorageSystem.vaultByID[item.type].Find(n => Helpers.Helper.CanStack(n.item, item));
+
+					entry.simStack = amount;
+
+					if (entry.CheckGone() && Main.netMode != NetmodeID.Server)
+						VaultBrowser.Rebuild();
+				}
+				else
+				{
+					bool result = StorageSystem.TryAddItem(item, out entry);
+
+					if (!result)
+					{
+						Logger.Warn("Failed to find item entry for a update packet! Has it already been withdrawn?");
+						return;
+					}
+
+					entry.simStack = amount;
+
+					if (entry != null && Main.netMode != NetmodeID.Server)
+						VaultBrowser.Rebuild();
 				}
 
-				entry.simStack -= amount;
-
-				if (entry.CheckGone() && Main.netMode != NetmodeID.Server)
-					VaultBrowser.Rebuild();
-
 				if (Main.netMode == NetmodeID.Server)
-					VaultNet.SendWithdrawl(amount, toSync, -1, whoAmI);
-			}
-			else if (type == "Deposit")
-			{
-				int amount = reader.ReadInt32();
-				Item item = ItemIO.Receive(reader);
-				Item toSync = item.Clone();
-
-				Logger.Info($"Deposit of {amount} {item.Name} recieved.");
-
-				item.stack = amount;
-				bool result = StorageSystem.TryAddItem(item, out ItemEntry newEntry);
-
-				if (!result)
 				{
-					Logger.Warn("Failed to add an item to the vault! Did something else fill it up?");
-					return;
+					if (entry != null)
+						VaultNet.SendItemUpdate(entry, -1, whoAmI);
+					else
+						Logger.Warn("Yikes! The server wanted to send out a null item entry!");
 				}
-
-				if (newEntry != null && Main.netMode != NetmodeID.Server)
-					VaultBrowser.Rebuild();
-
-				if (Main.netMode == NetmodeID.Server)
-					VaultNet.SendDeposit(amount, toSync, -1, whoAmI);
 			}
 			else if (type == "JoinReq")
 			{

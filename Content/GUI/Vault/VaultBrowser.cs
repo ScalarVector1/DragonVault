@@ -134,10 +134,10 @@ namespace DragonVault.Content.GUI.Vault
 		{
 			base.AdjustPositions(newPos);
 
-			button.Left.Set(newPos.X - 180, 0);
+			button.Left.Set(newPos.X - 170, 0);
 			button.Top.Set(newPos.Y, 0);
 
-			deposit.Left.Set(newPos.X - 180, 0);
+			deposit.Left.Set(newPos.X - 170, 0);
 			deposit.Top.Set(newPos.Y + 85, 0);
 
 			craft?.Left.Set(newPos.X, 0);
@@ -147,7 +147,7 @@ namespace DragonVault.Content.GUI.Vault
 
 			foreach (StoneSlot slot in slots)
 			{
-				slot.Left.Set(newPos.X - 74, 0);
+				slot.Left.Set(newPos.X - 64, 0);
 				slot.Top.Set(newPos.Y + 130 + y, 0);
 				y += 60;
 			}
@@ -200,12 +200,14 @@ namespace DragonVault.Content.GUI.Vault
 			if (BoundingBox.Contains(Main.MouseScreen.ToPoint()) && Main.mouseItem != null && !Main.mouseItem.IsAir)
 			{
 				Item item = Main.mouseItem.Clone();
-				VaultNet.SendDeposit(item.stack, item);
 
-				bool added = StorageSystem.TryAddItem(Main.mouseItem, out ItemEntry newEntry);
+				bool added = StorageSystem.TryAddItem(Main.mouseItem, out ItemEntry entryAddedTo);
 
-				if (added && newEntry != null)
+				if (added)
+				{
+					VaultNet.SendItemUpdate(entryAddedTo);
 					Rebuild();
+				}
 			}
 		}
 
@@ -213,9 +215,7 @@ namespace DragonVault.Content.GUI.Vault
 		{
 			UILoader.GetUIState<VaultBrowser>().options.Clear();
 			UILoader.GetUIState<VaultBrowser>().PopulateGrid(UILoader.GetUIState<VaultBrowser>().options);
-
-			UILoader.GetUIState<VaultBrowser>().Recalculate();
-			UILoader.GetUIState<VaultBrowser>().Recalculate();
+			UILoader.GetUIState<VaultBrowser>().SortGrid();
 		}
 	}
 
@@ -270,7 +270,7 @@ namespace DragonVault.Content.GUI.Vault
 				if (entry.CheckGone())
 					VaultBrowser.Rebuild();
 
-				VaultNet.SendWithdrawl(withdrawn, entry.item);
+				VaultNet.SendItemUpdate(entry);
 			}
 			else if (Main.mouseItem.IsAir)
 			{
@@ -282,7 +282,7 @@ namespace DragonVault.Content.GUI.Vault
 				if (entry.CheckGone())
 					VaultBrowser.Rebuild();
 
-				VaultNet.SendWithdrawl(withdrawn, entry.item);
+				VaultNet.SendItemUpdate(entry);
 			}
 		}
 
@@ -305,7 +305,7 @@ namespace DragonVault.Content.GUI.Vault
 				if (entry.CheckGone())
 					VaultBrowser.Rebuild();
 
-				VaultNet.SendWithdrawl(1, entry.item);
+				VaultNet.SendItemUpdate(entry);
 			}
 			else if (Main.mouseItem.type == entry.item.type && Helper.CanStack(Main.mouseItem, entry.item) && Main.mouseItem.stack < Main.mouseItem.maxStack)
 			{
@@ -315,7 +315,7 @@ namespace DragonVault.Content.GUI.Vault
 				if (entry.CheckGone())
 					VaultBrowser.Rebuild();
 
-				VaultNet.SendWithdrawl(1, entry.item);
+				VaultNet.SendItemUpdate(entry);
 			}
 		}
 
@@ -440,12 +440,13 @@ namespace DragonVault.Content.GUI.Vault
 				// Ignore favorited items
 				if (!item.IsAir && !item.favorited)
 				{
-					VaultNet.SendDeposit(item.stack, item);
+					bool added = StorageSystem.TryAddItem(item, out ItemEntry entryAddedTo);
 
-					bool added = StorageSystem.TryAddItem(item, out ItemEntry newEntry);
-
-					if (added && newEntry != null)
+					if (added)
+					{
+						VaultNet.SendItemUpdate(entryAddedTo);
 						VaultBrowser.Rebuild();
+					}
 				}
 			}
 
